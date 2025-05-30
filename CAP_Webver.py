@@ -8,16 +8,13 @@ from scipy.integrate import simpson
 import io
 
 # フォント全体設定
-st.markdown(
-    """
-    <style>
-    html, body, [class*="css"]  {
-      font-family: "Times New Roman", Times, serif !important;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
+st.markdown("""
+<style>
+html, body, [class*="css"]  {
+    font-family: "Times New Roman", Times, serif !important;
+}
+</style>
+""", unsafe_allow_html=True)
 plt.rcParams['font.family'] = 'Times New Roman'
 
 colors = [
@@ -65,30 +62,13 @@ uploaded_files = st.file_uploader(
     accept_multiple_files=True
 )
 
-with st.sidebar:
-    st.header("グラフ詳細設定")
-    xaxis_auto = st.checkbox("x軸を自動", value=True)
-    yaxis_auto = st.checkbox("y軸を自動", value=True)
-    x_min = st.number_input("x軸最小(分)", value=0.0, disabled=xaxis_auto)
-    x_max = st.number_input("x軸最大(分)", value=10.0, disabled=xaxis_auto)
-    y_min = st.number_input("y軸最小(mV)", value=0.0, disabled=yaxis_auto)
-    y_max = st.number_input("y軸最大(mV)", value=200.0, disabled=yaxis_auto)
-    show_scalebar = st.checkbox("スケールバーを表示", value=True)
-    scale_value = st.number_input("スケールバー値(mV)", value=50)
-    scale_x_pos = st.slider("スケールバー x位置（0=左, 1=右）", 0.0, 1.0, 0.7, 0.01)
-    scale_y_pos = st.slider("スケールバー y位置（0=下, 1=上）", 0.0, 1.0, 0.15, 0.01)
-    font_xlabel = st.slider("x軸ラベルフォント", 6, 30, 14)
-    font_ylabel = st.slider("y軸ラベルフォント", 6, 30, 14)
-    font_legend = st.slider("凡例フォント", 6, 24, 10)
-    font_tick = st.slider("目盛フォント", 6, 20, 10)
-
-show_peaks = st.checkbox("ピークマーカーを表示（全データ）", True)
-show_legend = st.checkbox("凡例を表示", True)
+# ↓↓↓ 軸範囲の自動計算変数の初期化
+auto_xmin, auto_xmax, auto_ymin, auto_ymax = 0.0, 10.0, 0.0, 200.0
 file_info_list = []
 
 if uploaded_files:
-    st.markdown("### 凡例名（任意で変更可）")
     legends = []
+    xmin_total, xmax_total, ymin_total, ymax_total = [], [], [], []
     for i, uploaded_file in enumerate(uploaded_files):
         legend_label = st.text_input(
             f"{uploaded_file.name} の凡例名",
@@ -96,10 +76,6 @@ if uploaded_files:
             key=uploaded_file.name
         )
         legends.append(legend_label)
-
-    fig, ax = plt.subplots(figsize=(9, 4))
-    xmin_total, xmax_total, ymin_total, ymax_total = [], [], [], []
-    handles = []  # 凡例用Line2Dオブジェクトをためる
 
     for idx, uploaded_file in enumerate(uploaded_files):
         try:
@@ -110,28 +86,7 @@ if uploaded_files:
             peaks, _ = find_peaks(data, height=10.0, prominence=0.5, width=10)
             color = colors[idx % len(colors)]
             marker = markers[idx % len(markers)]
-            # 波形
-            ax.plot(time, data, label=legends[idx], color=color)
-            # ピークマーカー
-            if show_peaks and len(peaks) > 0:
-                ax.plot(
-                    time[peaks], data[peaks], marker,
-                    linestyle="None", markersize=6,
-                    markerfacecolor=color, markeredgecolor=color, label=None
-                )
-            # 凡例用（線＋マーカー）
-                legend_line = mlines.Line2D(
-                    [], [], color=color, marker=marker, linestyle='-',
-                    label=legends[idx], markersize=6,
-                    markerfacecolor=color, markeredgecolor=color
-                )
-            else:
-                # 線だけ
-                legend_line = mlines.Line2D(
-                    [], [], color=color, marker=None, linestyle='-',
-                    label=legends[idx]
-                )
-            handles.append(legend_line)
+
             file_info_list.append({
                 "name": uploaded_file.name,
                 "legend": legends[idx],
@@ -148,6 +103,72 @@ if uploaded_files:
         except Exception as e:
             st.error(f"{uploaded_file.name}: エラー発生({e})")
 
+    # 軸範囲の自動計算（ファイル全部読んだあと！）
+    if xmin_total and xmax_total:
+        auto_xmin = float(np.min(xmin_total))
+        auto_xmax = float(np.max(xmax_total))
+    if ymin_total and ymax_total:
+        auto_ymin = float(np.min(ymin_total))
+        # y軸のmaxだけ[上方向に10%拡大]も可能
+        auto_ymax = float(np.max(ymax_total)) * 1.1
+    else:
+        auto_ymin, auto_ymax = 0.0, 200.0
+
+# サイドバー（自動計算値を渡すのはここ！）
+with st.sidebar:
+    st.header("グラフ詳細設定")
+    xaxis_auto = st.checkbox("x軸を自動", value=True)
+    yaxis_auto = st.checkbox("y軸を自動", value=True)
+    x_min = st.number_input("x軸最小(分)", value=0, disabled=xaxis_auto)
+    x_max = st.number_input("x軸最大(分)", value=auto_xmax, disabled=xaxis_auto)
+    y_min = st.number_input("y軸最小(mV)", value=-10, disabled=yaxis_auto)
+    y_max = st.number_input("y軸最大(mV)", value=auto_ymax, disabled=yaxis_auto)
+    show_scalebar = st.checkbox("スケールバーを表示", value=True)
+    scale_value = st.number_input("スケールバー値(mV)", value=50)
+    scale_x_pos = st.slider("スケールバー x位置（0=左, 1=右）", 0.0, 1.0, 0.7, 0.01)
+    scale_y_pos = st.slider("スケールバー y位置（0=下, 1=上）", 0.0, 1.0, 0.15, 0.01)
+    font_xlabel = st.slider("x軸ラベルフォント", 6, 30, 14)
+    font_ylabel = st.slider("y軸ラベルフォント", 6, 30, 14)
+    font_legend = st.slider("凡例フォント", 6, 24, 10)
+    font_tick = st.slider("目盛フォント", 6, 20, 10)
+
+show_peaks = st.checkbox("ピークマーカーを表示（全データ）", True)
+show_legend = st.checkbox("凡例を表示", True)
+
+if uploaded_files:
+    st.markdown("### 凡例名（任意で変更可）")
+    fig, ax = plt.subplots(figsize=(9, 4))
+    handles = []  # 凡例用Line2Dオブジェクト
+
+    for idx, info in enumerate(file_info_list):
+        data = info["data"]
+        time = info["time"]
+        peaks = info["peaks"]
+        color = info["color"]
+        marker = info["marker"]
+        legend = info["legend"]
+
+        # 波形
+        ax.plot(time, data, label=legend, color=color)
+        # ピークマーカー
+        if show_peaks and len(peaks) > 0:
+            ax.plot(
+                time[peaks], data[peaks], marker,
+                linestyle="None", markersize=6,
+                markerfacecolor=color, markeredgecolor=color, label=None
+            )
+            legend_line = mlines.Line2D(
+                [], [], color=color, marker=marker, linestyle='-',
+                label=legend, markersize=6,
+                markerfacecolor=color, markeredgecolor=color
+            )
+        else:
+            legend_line = mlines.Line2D(
+                [], [], color=color, marker=None, linestyle='-',
+                label=legend
+            )
+        handles.append(legend_line)
+
     # 軸範囲
     if not xaxis_auto:
         ax.set_xlim(x_min, x_max)
@@ -156,14 +177,14 @@ if uploaded_files:
     if not yaxis_auto:
         ax.set_ylim(y_min, y_max)
     elif ymin_total and ymax_total:
-        ax.set_ylim(min(ymin_total), max(ymax_total)*1.1)
+        ax.set_ylim(min(ymin_total), max(ymax_total) * 1.1)
 
     # 枠・y軸メモリ消し
     for spine in ["top", "right", "left"]:
         ax.spines[spine].set_visible(False)
     ax.set_yticks([])
 
-    # 軸ラベル
+    # ラベル・装飾
     ax.set_xlabel("Time (min)", fontsize=font_xlabel)
     ax.set_ylabel("Absorbance [-]", fontsize=font_ylabel)
 
@@ -182,7 +203,7 @@ if uploaded_files:
     # カスタム凡例
     if show_legend:
         ax.legend(handles=handles, fontsize=font_legend)
-        ax.tick_params(axis='both', labelsize=font_tick)
+    ax.tick_params(axis='both', labelsize=font_tick)
 
     # スケールバー
     if show_scalebar:
@@ -202,22 +223,18 @@ if uploaded_files:
 
     st.pyplot(fig)
 
-    # グラフ保存用のバッファを作成
+    # グラフ保存用バッファとダウンロードボタン
     buf = io.BytesIO()
     fig.savefig(buf, format="pdf", bbox_inches="tight")
     buf.seek(0)
-
-    # ダウンロードボタン
     st.download_button(
         label="グラフをPDFで保存",
         data=buf,
         file_name="chromatogram.pdf",
-        mime="image/pdf"
+        mime="application/pdf"
     )
 
-
-# 解析結果
-if file_info_list:
+    # 解析結果表示
     st.markdown("### 解析結果")
     for info in file_info_list:
         st.write(f"**{info['legend']}** … 検出されたピーク数: {len(info['peaks'])}")
@@ -228,12 +245,6 @@ if file_info_list:
             )
             symmetry, W_0_05h, f = calculate_peak_parameters(info['data'], info['time'], peak)
             st.write(
-                f"""ピーク {i}:
-  保持時間: {info['time'][peak]:.2f}分
-  ピーク高さ: {info['data'][peak]:.2f}mV
-  面積: {area:.2f}
-  W_0.05h: {W_0_05h:.3f}
-  f: {f:.3f}
-  シンメトリー係数(S): {symmetry:.3f}
-                """
+                f"""ピーク {i}:  保持時間: {info['time'][peak]:.2f}分  ピーク高さ: {info['data'][peak]:.2f}mV  面積: {area:.2f}  W_0.05h: {W_0_05h:.3f}  f: {f:.3f}  シンメトリー係数(S): {symmetry:.3f}"""
             )
+
