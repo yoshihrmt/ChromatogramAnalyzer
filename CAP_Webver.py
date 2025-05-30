@@ -194,7 +194,7 @@ if uploaded_files:
         "",
         xy=(arrow_x, ylim[1]),
         xytext=(arrow_x, ylim[0]),
-        arrowprops=dict(arrowstyle='->', lw=1.5),
+        arrowprops=dict(arrowstyle='->', lw=1),
         clip_on=False
     )
 
