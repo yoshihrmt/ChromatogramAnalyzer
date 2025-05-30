@@ -105,10 +105,10 @@ if uploaded_files:
 
     # 軸範囲の自動計算
     if xmin_total and xmax_total:
-        auto_xmin = float(np.min(xmin_total))
+        auto_xmin = 0
         auto_xmax = float(np.max(xmax_total))
     if ymin_total and ymax_total:
-        auto_ymin = float(np.min(ymin_total))
+        auto_ymin = -10
         auto_ymax = float(np.max(ymax_total)) * 1.1
     else:
         auto_ymin, auto_ymax = 0.0, 200.0
