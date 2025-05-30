@@ -103,18 +103,17 @@ if uploaded_files:
         except Exception as e:
             st.error(f"{uploaded_file.name}: エラー発生({e})")
 
-    # 軸範囲の自動計算（ファイル全部読んだあと！）
+    # 軸範囲の自動計算
     if xmin_total and xmax_total:
         auto_xmin = float(np.min(xmin_total))
         auto_xmax = float(np.max(xmax_total))
     if ymin_total and ymax_total:
         auto_ymin = float(np.min(ymin_total))
-        # y軸のmaxだけ[上方向に10%拡大]も可能
         auto_ymax = float(np.max(ymax_total)) * 1.1
     else:
         auto_ymin, auto_ymax = 0.0, 200.0
 
-# サイドバー（自動計算値を渡すのはここ！）
+# サイドバー
 with st.sidebar:
     st.header("グラフ詳細設定")
     xaxis_auto = st.checkbox("x軸を自動", value=True)
