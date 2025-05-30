@@ -135,7 +135,6 @@ show_peaks = st.checkbox("ピークマーカーを表示（全データ）", Tru
 show_legend = st.checkbox("凡例を表示", True)
 
 if uploaded_files:
-    st.markdown("### 凡例名（任意で変更可）")
     fig, ax = plt.subplots(figsize=(9, 4))
     handles = []  # 凡例用Line2Dオブジェクト
 
