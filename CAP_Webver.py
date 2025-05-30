@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-plt.rcParams['font.family'] = 'Times New Roman'
+plt.rcParams['font.family'] = ['Times New Roman', 'serif']
 import matplotlib.lines as mlines
 from scipy.signal import find_peaks
 from scipy.integrate import simpson
@@ -185,7 +185,7 @@ if uploaded_files:
     ax.set_yticks([])
 
     # ラベル・装飾
-    ax.set_xlabel("Time (min)", fontsize=font_xlabel)
+    ax.set_xlabel("Time [min]", fontsize=font_xlabel)
     ax.set_ylabel("Absorbance [-]", fontsize=font_ylabel)
 
     # y軸の上向き矢印
