@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+plt.rcParams['font.family'] = 'Times New Roman'
 import matplotlib.lines as mlines
 from scipy.signal import find_peaks
 from scipy.integrate import simpson
@@ -15,7 +16,6 @@ html, body, [class*="css"]  {
 }
 </style>
 """, unsafe_allow_html=True)
-plt.rcParams['font.family'] = 'Times New Roman'
 
 colors = [
     'navy', 'crimson', 'forestgreen', 'darkorange', 'purple', 'teal', 'maroon',
