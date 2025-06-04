@@ -179,8 +179,8 @@ if uploaded_files and file_info_list:
     ax.set_xlabel("Time /min", fontsize=font_xlabel, fontproperties=font_prop)
     ax.set_ylabel("Absorbance /-", fontsize=font_ylabel, fontproperties=font_prop)
     for label in ax.get_xticklabels() + ax.get_yticklabels():
-    label.set_fontproperties(font_prop)
-    label.set_fontsize(font_tick)
+        label.set_fontproperties(font_prop)
+        label.set_fontsize(font_tick)
     ylim = ax.get_ylim()
     xlim = ax.get_xlim()
     arrow_x = xlim[0]
