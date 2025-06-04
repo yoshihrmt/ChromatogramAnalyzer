@@ -265,8 +265,8 @@ if uploaded_files and file_info_list:
     ax.set_yticks([])
 
     # ラベル
-    ax.set_xlabel("Time /min", fontsize=font_xlabel, fontname='Yu Mincho')
-    ax.set_ylabel("Absorbance /-", fontsize=font_ylabel, fontname='Yu Mincho')
+    ax.set_xlabel("Time /min", fontsize=font_xlabel)
+    ax.set_ylabel("Absorbance /-", fontsize=font_ylabel)
 
     # y軸の上向き矢印
     ylim = ax.get_ylim()
