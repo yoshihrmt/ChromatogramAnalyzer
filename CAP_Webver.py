@@ -72,7 +72,6 @@ with st.sidebar:
             font-size: 1.3rem;
             font-weight: bold;
             text-align: center;
-            border: 2px solid #444;
             ">
             グラフ詳細設定
         </div>
@@ -100,7 +99,6 @@ with st.sidebar:
         font-size: 1.3rem;
         font-weight: bold;
         text-align: center;
-        border: 2px solid #444;
         ">
         ピーク検出パラメータ
     </div>
@@ -121,7 +119,6 @@ with st.sidebar:
         font-size: 1.3rem;
         font-weight: bold;
         text-align: center;
-        border: 2px solid #444;
         ">
         フォントサイズ
     </div>
