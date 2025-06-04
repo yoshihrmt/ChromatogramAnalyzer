@@ -2,26 +2,20 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-plt.rcParams['font.family'] = 'serif'
-plt.rcParams['font.serif'] = [
-    'Yu Mincho', '游明朝', 'MS Mincho', 'Hiragino Mincho ProN',
-    'Times New Roman', 'Times', 'serif'
-]
-plt.rcParams['axes.unicode_minus'] = False
+plt.rcParams['font.family'] = ['serif']
 import matplotlib.lines as mlines
 from scipy.signal import find_peaks
 from scipy.integrate import simpson
 import io
 
+# フォント全体設定
 st.markdown("""
 <style>
-html, body, [class*="css"] {
-    font-family: 'serif', '游明朝', 'Yu Mincho';
-!important;
+html, body, [class*="css"]  {
+font-family: ,Times, serif !important;
 }
 </style>
 """, unsafe_allow_html=True)
-
 
 colors = [
     'navy', 'crimson', 'forestgreen', 'darkorange', 'purple', 'teal', 'maroon',
@@ -31,13 +25,10 @@ colors = [
     'seagreen', 'darkcyan', 'darkkhaki', 'sienna', 'royalblue', 'darkslateblue',
     'darkgoldenrod', 'mediumorchid', 'mediumblue', 'indianred', 'mediumseagreen',
     'peru', 'slateblue', 'olivedrab', 'rosybrown', 'mediumvioletred'
-    ]
+]
 markers = [
     'o', 's', '^', 'v', 'd', 'x', '+', '<', '>', '*', 'p', 'h', 'H', 'D', '|', '_', '8'
-    ]
-
-# 軸初期値
-auto_xmin, auto_xmax, auto_ymin, auto_ymax = 0.0, 10.0, 0.0, 200.0
+]
 
 def process_chromatogram_data(df):
     df['height(mV)'] = df['height(uV)'].replace([np.inf, -np.inf], np.nan).fillna(0) / 1000
@@ -63,138 +54,39 @@ def calculate_peak_parameters(data, time, peak_index):
     symmetry = W_0_05h / (2 * f) if f != 0 else np.nan
     return symmetry, W_0_05h, f
 
-st.markdown(
-    """
-    <div style="
-        background: #2c2c2c;
-        color: #fff;
-        border-radius: 16px;
-        padding: 10px 0 6px 0;
-        margin-bottom: 18px;
-        font-size: 1.8rem;
-        font-weight: bold;
-        text-align: center;
-        font-family: 'Times New Roman', Times, serif;
-        ">
-        Chromatogram Analyzer
-    </div>
-    """,
-    unsafe_allow_html=True
-)
+st.title("Chromatogram Analyzer")
 
-# ================== サイドバー ================== #
-with st.sidebar:
-    st.markdown(
-        """
-        <div style="
-            background: #2c2c2c;
-            color: #fff;
-            border-radius: 16px;
-            padding: 10px 0 6px 0;
-            margin-bottom: 18px;
-            font-size: 1.3rem;
-            font-weight: bold;
-            text-align: center;
-            font-family: 'Times New Roman', Times, serif;
-            ">
-            グラフ詳細設定
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-    xaxis_auto = st.checkbox("x軸を自動", value=True)
-    yaxis_auto = st.checkbox("y軸を自動", value=True)
-    x_min = st.number_input("x軸最小(分)", value=auto_xmin, disabled=xaxis_auto)
-    x_max = st.number_input("x軸最大(分)", value=auto_xmax, disabled=xaxis_auto)
-    y_min = st.number_input("y軸最小(mV)", value=auto_ymin, disabled=yaxis_auto)
-    y_max = st.number_input("y軸最大(mV)", value=auto_ymax, disabled=yaxis_auto)
-    show_scalebar = st.checkbox("スケールバーを表示", value=True)
-    scale_value = st.number_input("スケールバー値(mV)", value=50)
-    scale_x_pos = st.slider("スケールバー x位置（0=左, 1=右）", 0.0, 1.0, 0.7, 0.01)
-    scale_y_pos = st.slider("スケールバー y位置（0=下, 1=上）", 0.0, 1.0, 0.15, 0.01)
-    st.markdown(
-    """
-    <div style="
-        background: #2c2c2c;
-        color: #fff;
-        border-radius: 16px;
-        padding: 10px 0 6px 0;
-        margin-bottom: 18px;
-        font-size: 1.3rem;
-        font-weight: bold;
-        text-align: center;
-        font-family: 'Times New Roman', Times, serif;
-        ">
-        ピーク検出パラメータ
-    </div>
-    """,
-    unsafe_allow_html=True
-    )
-    peak_height = st.number_input("最低ピーク高さ（mV）", value=10.0, min_value=0.0, step=1.0)
-    peak_prominence = st.number_input("ピークの顕著さ（prominence）", value=0.5, min_value=0.0, step=0.1)
-    peak_width = st.number_input("ピークの最低幅（width）", value=10, min_value=1, step=1)
-    st.markdown(
-    """
-    <div style="
-        background: #2c2c2c;
-        color: #fff;
-        border-radius: 16px;
-        padding: 10px 0 6px 0;
-        margin-bottom: 18px;
-        font-size: 1.3rem;
-        font-weight: bold;
-        text-align: center;
-        font-family: 'Times New Roman', Times, serif;
-        ">
-        フォントサイズ
-    </div>
-    """,
-    unsafe_allow_html=True
-    )
-    font_xlabel = st.slider("x軸ラベルフォント", 6, 30, 14)
-    font_ylabel = st.slider("y軸ラベルフォント", 6, 30, 14)
-    font_legend = st.slider("凡例フォント", 6, 24, 10)
-    font_tick = st.slider("目盛フォント", 6, 20, 10)
-
-# ============ ファイルアップロード・前処理 ============= #
-st.markdown(
-    "<span style='font-family: Times New Roman, Times, serif; font-size:1.12rem;'>Excelファイルを複数選択してください</span>",
-    unsafe_allow_html=True
-)
 uploaded_files = st.file_uploader(
-    "",
+    "Excelファイルを複数選択してください",
     type=["xlsx", "xls"],
     accept_multiple_files=True
 )
 
+# ↓↓↓ 軸範囲の自動計算変数の初期化
+auto_xmin, auto_xmax, auto_ymin, auto_ymax = 0.0, 10.0, 0.0, 200.0
 file_info_list = []
-xmin_total, xmax_total, ymin_total, ymax_total = [], [], [], []
-legends = []
 
 if uploaded_files:
+    legends = []
+    xmin_total, xmax_total, ymin_total, ymax_total = [], [], [], []
     for i, uploaded_file in enumerate(uploaded_files):
         legend_label = st.text_input(
             f"{uploaded_file.name} の凡例名",
             value=uploaded_file.name,
-            key=f"legend_{i}"
+            key=uploaded_file.name
         )
         legends.append(legend_label)
 
-    # ファイルごとに処理
     for idx, uploaded_file in enumerate(uploaded_files):
         try:
             df = pd.read_excel(uploaded_file, sheet_name='RAW DATA')
             df = process_chromatogram_data(df)
             data = df['height(mV)'].values
             time = df['time(min)'].values
-            peaks, _ = find_peaks(
-                data,
-                height=peak_height,
-                prominence=peak_prominence,
-                width=peak_width
-            )
+            peaks, _ = find_peaks(data, height=10.0, prominence=0.5, width=10)
             color = colors[idx % len(colors)]
             marker = markers[idx % len(markers)]
+
             file_info_list.append({
                 "name": uploaded_file.name,
                 "legend": legends[idx],
@@ -210,27 +102,49 @@ if uploaded_files:
             ymax_total.append(np.max(data))
         except Exception as e:
             st.error(f"{uploaded_file.name}: エラー発生({e})")
+
     # 軸範囲の自動計算
     if xmin_total and xmax_total:
-        auto_xmin = min(xmin_total)
+        auto_xmin = 0
         auto_xmax = float(np.max(xmax_total))
     if ymin_total and ymax_total:
-        auto_ymin = min(ymin_total)
+        auto_ymin = -10
         auto_ymax = float(np.max(ymax_total)) * 1.1
+    else:
+        auto_ymin, auto_ymax = 0.0, 200.0
 
-# =================== グラフ描画 ===================== #
-if uploaded_files and file_info_list:
+# サイドバー
+with st.sidebar:
+    st.header("グラフ詳細設定")
+    xaxis_auto = st.checkbox("x軸を自動", value=True)
+    yaxis_auto = st.checkbox("y軸を自動", value=True)
+    x_min = st.number_input("x軸最小(分)", value=0.0, disabled=xaxis_auto)
+    x_max = st.number_input("x軸最大(分)", value=auto_xmax, disabled=xaxis_auto)
+    y_min = st.number_input("y軸最小(mV)", value=-10.0, disabled=yaxis_auto)
+    y_max = st.number_input("y軸最大(mV)", value=auto_ymax, disabled=yaxis_auto)
+    show_scalebar = st.checkbox("スケールバーを表示", value=True)
+    scale_value = st.number_input("スケールバー値(mV)", value=50)
+    scale_x_pos = st.slider("スケールバー x位置（0=左, 1=右）", 0.0, 1.0, 0.7, 0.01)
+    scale_y_pos = st.slider("スケールバー y位置（0=下, 1=上）", 0.0, 1.0, 0.15, 0.01)
+    font_xlabel = st.slider("x軸ラベルフォント", 6, 30, 14)
+    font_ylabel = st.slider("y軸ラベルフォント", 6, 30, 14)
+    font_legend = st.slider("凡例フォント", 6, 24, 10)
+    font_tick = st.slider("目盛フォント", 6, 20, 10)
     show_peaks = st.checkbox("ピークマーカーを表示（全データ）", True)
     show_legend = st.checkbox("凡例を表示", True)
+
+if uploaded_files:
     fig, ax = plt.subplots(figsize=(9, 4))
-    handles = []
-    for info in file_info_list:
+    handles = []  # 凡例用Line2Dオブジェクト
+
+    for idx, info in enumerate(file_info_list):
         data = info["data"]
         time = info["time"]
         peaks = info["peaks"]
         color = info["color"]
         marker = info["marker"]
         legend = info["legend"]
+
         # 波形
         ax.plot(time, data, label=legend, color=color)
         # ピークマーカー
@@ -240,16 +154,19 @@ if uploaded_files and file_info_list:
                 linestyle="None", markersize=6,
                 markerfacecolor=color, markeredgecolor=color, label=None
             )
-        # 凡例Line2D
-        legend_line = mlines.Line2D(
-            [], [], color=color,
-            marker=marker if show_peaks and len(peaks) > 0 else None,
-            linestyle='-', label=legend, markersize=6,
-            markerfacecolor=color, markeredgecolor=color
-        )
+            legend_line = mlines.Line2D(
+                [], [], color=color, marker=marker, linestyle='-',
+                label=legend, markersize=6,
+                markerfacecolor=color, markeredgecolor=color
+            )
+        else:
+            legend_line = mlines.Line2D(
+                [], [], color=color, marker=None, linestyle='-',
+                label=legend
+            )
         handles.append(legend_line)
 
-    # 軸設定
+    # 軸範囲
     if not xaxis_auto:
         ax.set_xlim(x_min, x_max)
     elif xmin_total and xmax_total:
@@ -264,7 +181,7 @@ if uploaded_files and file_info_list:
         ax.spines[spine].set_visible(False)
     ax.set_yticks([])
 
-    # ラベル
+    # ラベル・装飾
     ax.set_xlabel("Time /min", fontsize=font_xlabel)
     ax.set_ylabel("Absorbance /-", fontsize=font_ylabel)
 
@@ -282,7 +199,7 @@ if uploaded_files and file_info_list:
 
     # カスタム凡例
     if show_legend:
-        ax.legend(handles=handles, fontsize=font_legend, fontname='Yu Mincho')
+        ax.legend(handles=handles, fontsize=font_legend)
     ax.tick_params(axis='both', labelsize=font_tick)
 
     # スケールバー
@@ -303,16 +220,16 @@ if uploaded_files and file_info_list:
 
     st.pyplot(fig)
 
+    # グラフ保存用バッファとダウンロードボタン
     buf = io.BytesIO()
     fig.savefig(buf, format="pdf", bbox_inches="tight")
     buf.seek(0)
     st.download_button(
         label="グラフをPDFで保存",
         data=buf,
-        file_name=".pdf",
+        file_name="chromatogram.pdf",
         mime="application/pdf"
     )
-
 
     # 解析結果表示
     st.markdown("### 解析結果")
