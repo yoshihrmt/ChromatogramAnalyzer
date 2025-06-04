@@ -57,7 +57,23 @@ def calculate_peak_parameters(data, time, peak_index):
     symmetry = W_0_05h / (2 * f) if f != 0 else np.nan
     return symmetry, W_0_05h, f
 
-st.title("Chromatogram Analyzer")
+st.markdown(
+    """
+    <div style="
+        background: #222;
+        color: #fff;
+        border-radius: 16px;
+        padding: 10px 0 6px 0;
+        margin-bottom: 18px;
+        font-size: 1.3rem;
+        font-weight: bold;
+        text-align: center;
+        ">
+        Chromatogram Analyzer
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
 # ================== サイドバー ================== #
 with st.sidebar:
@@ -142,7 +158,6 @@ xmin_total, xmax_total, ymin_total, ymax_total = [], [], [], []
 legends = []
 
 if uploaded_files:
-    # 凡例名の入力は一度だけ
     for i, uploaded_file in enumerate(uploaded_files):
         legend_label = st.text_input(
             f"{uploaded_file.name} の凡例名",
@@ -280,7 +295,7 @@ if uploaded_files and file_info_list:
     st.download_button(
         label="グラフをPDFで保存",
         data=buf,
-        file_name="chromatogram.pdf",
+        file_name=".pdf",
         mime="application/pdf"
     )
 
