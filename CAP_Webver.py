@@ -12,7 +12,7 @@ import io
 st.markdown("""
 <style>
 html, body, [class*="css"]  {
-    font-family: Times, serif !important;
+font-family: Times, serif !important;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -56,15 +56,17 @@ def calculate_peak_parameters(data, time, peak_index):
 
 st.title("Chromatogram Analyzer")
 
+# 軸/初期値
 auto_xmin, auto_xmax, auto_ymin, auto_ymax = 0.0, 10.0, 0.0, 200.0
-# サイドバー
+
+# サイドバー設定
 with st.sidebar:
     st.header("グラフ詳細設定")
     xaxis_auto = st.checkbox("x軸を自動", value=True)
     yaxis_auto = st.checkbox("y軸を自動", value=True)
-    x_min = st.number_input("x軸最小(分)", value=0, disabled=xaxis_auto)
+    x_min = st.number_input("x軸最小(分)", value=auto_xmin, disabled=xaxis_auto)
     x_max = st.number_input("x軸最大(分)", value=auto_xmax, disabled=xaxis_auto)
-    y_min = st.number_input("y軸最小(mV)", value=-10, disabled=yaxis_auto)
+    y_min = st.number_input("y軸最小(mV)", value=auto_ymin, disabled=yaxis_auto)
     y_max = st.number_input("y軸最大(mV)", value=auto_ymax, disabled=yaxis_auto)
     show_scalebar = st.checkbox("スケールバーを表示", value=True)
     scale_value = st.number_input("スケールバー値(mV)", value=50)
@@ -78,32 +80,31 @@ with st.sidebar:
     font_ylabel = st.slider("y軸ラベルフォント", 6, 30, 14)
     font_legend = st.slider("凡例フォント", 6, 24, 10)
     font_tick = st.slider("目盛フォント", 6, 20, 10)
+    show_peaks = st.checkbox("ピークマーカーを表示（全データ）", True)
+    show_legend = st.checkbox("凡例を表示", True)
 
-show_peaks = st.checkbox("ピークマーカーを表示（全データ）", True)
-show_legend = st.checkbox("凡例を表示", True)
-
-
+# アップロード
 uploaded_files = st.file_uploader(
     "Excelファイルを複数選択してください",
     type=["xlsx", "xls"],
     accept_multiple_files=True
 )
 
-# ↓↓↓ 軸範囲の自動計算変数の初期化
-auto_xmin, auto_xmax, auto_ymin, auto_ymax = 0.0, 10.0, 0.0, 200.0
 file_info_list = []
+xmin_total, xmax_total, ymin_total, ymax_total = [], [], [], []
+legends = []
 
 if uploaded_files:
-    legends = []
-    xmin_total, xmax_total, ymin_total, ymax_total = [], [], [], []
+    # 凡例名の入力は一度だけ
     for i, uploaded_file in enumerate(uploaded_files):
         legend_label = st.text_input(
             f"{uploaded_file.name} の凡例名",
             value=uploaded_file.name,
-            key=uploaded_file.name
+            key=f"legend_{i}"
         )
         legends.append(legend_label)
 
+    # ファイルごとに処理
     for idx, uploaded_file in enumerate(uploaded_files):
         try:
             df = pd.read_excel(uploaded_file, sheet_name='RAW DATA')
@@ -116,10 +117,8 @@ if uploaded_files:
                 prominence=peak_prominence,
                 width=peak_width
             )
-
             color = colors[idx % len(colors)]
             marker = markers[idx % len(markers)]
-
             file_info_list.append({
                 "name": uploaded_file.name,
                 "legend": legends[idx],
@@ -135,64 +134,42 @@ if uploaded_files:
             ymax_total.append(np.max(data))
         except Exception as e:
             st.error(f"{uploaded_file.name}: エラー発生({e})")
-
-    # 軸範囲の自動計算
+    # 軸の自動計算
     if xmin_total and xmax_total:
-        auto_xmin = 0
+        auto_xmin = min(xmin_total)
         auto_xmax = float(np.max(xmax_total))
     if ymin_total and ymax_total:
-        auto_ymin = -10
+        auto_ymin = min(ymin_total)
         auto_ymax = float(np.max(ymax_total)) * 1.1
-    else:
-        auto_ymin, auto_ymax = 0.0, 200.0
 
-if uploaded_files:
-    legends = []
+# グラフ描画
+if uploaded_files and file_info_list:
     fig, ax = plt.subplots(figsize=(9, 4))
-    handles = []  # 凡例用Line2Dオブジェクト
-
-    for idx, info in enumerate(file_info_list):
-       legends = []
-    xmin_total, xmax_total, ymin_total, ymax_total = [], [], [], []
-    for i, uploaded_file in enumerate(uploaded_files):
-        legend_label = st.text_input(
-            f"{uploaded_file.name} の凡例名",
-            value=uploaded_file.name,
-            key=uploaded_file.name
-        )
-        legends.append(legend_label)
-
-    for idx, uploaded_file in enumerate(uploaded_files):
-        try:
-            df = pd.read_excel(uploaded_file, sheet_name='RAW DATA')
-            df = process_chromatogram_data(df)
-            data = df['height(mV)'].values
-            time = df['time(min)'].values
-            peaks, _ = find_peaks(
-                data,
-                height=peak_height,
-                prominence=peak_prominence,
-                width=peak_width
+    handles = []
+    for info in file_info_list:
+        data = info["data"]
+        time = info["time"]
+        peaks = info["peaks"]
+        color = info["color"]
+        marker = info["marker"]
+        legend = info["legend"]
+        # 波形
+        ax.plot(time, data, label=legend, color=color)
+        # ピークマーカー
+        if show_peaks and len(peaks) > 0:
+            ax.plot(
+                time[peaks], data[peaks], marker,
+                linestyle="None", markersize=6,
+                markerfacecolor=color, markeredgecolor=color, label=None
             )
-            color = colors[idx % len(colors)]
-            marker = markers[idx % len(markers)]
+        legend_line = mlines.Line2D(
+            [], [], color=color, marker=marker if show_peaks and len(peaks) > 0 else None,
+            linestyle='-', label=legend, markersize=6,
+            markerfacecolor=color, markeredgecolor=color
+        )
+        handles.append(legend_line)
 
-            file_info_list.append({
-                "name": uploaded_file.name,
-                "legend": legends[idx],
-                "peaks": peaks,
-                "time": time,
-                "data": data,
-                "color": color,
-                "marker": marker,
-            })
-            xmin_total.append(np.min(time))
-            xmax_total.append(np.max(time))
-            ymin_total.append(np.min(data))
-            ymax_total.append(np.max(data))
-        except Exception as e:
-            st.error(f"{uploaded_file.name}: エラー発生({e})")
-    # 軸範囲
+    # 軸設定
     if not xaxis_auto:
         ax.set_xlim(x_min, x_max)
     elif xmin_total and xmax_total:
@@ -207,7 +184,7 @@ if uploaded_files:
         ax.spines[spine].set_visible(False)
     ax.set_yticks([])
 
-    # ラベル・装飾
+    # ラベル
     ax.set_xlabel("Time /min", fontsize=font_xlabel)
     ax.set_ylabel("Absorbance /-", fontsize=font_ylabel)
 
@@ -246,7 +223,6 @@ if uploaded_files:
 
     st.pyplot(fig)
 
-    # グラフ保存用バッファとダウンロードボタン
     buf = io.BytesIO()
     fig.savefig(buf, format="pdf", bbox_inches="tight")
     buf.seek(0)
@@ -260,7 +236,7 @@ if uploaded_files:
     # 解析結果表示
     st.markdown("### 解析結果")
     for info in file_info_list:
-        st.write(f"**{info['legend']}** … 検出されたピーク数: {len(info['peaks'])}")
+        st.write(f"{info['legend']} … 検出されたピーク数: {len(info['peaks'])}")
         for i, peak in enumerate(info["peaks"], 1):
             area = simpson(
                 y=info['data'][max(0, peak-50):min(len(info['data']), peak+50)],
@@ -270,4 +246,3 @@ if uploaded_files:
             st.write(
                 f"""ピーク {i}:  保持時間: {info['time'][peak]:.2f}分  ピーク高さ: {info['data'][peak]:.2f}mV  面積: {area:.2f}  W_0.05h: {W_0_05h:.3f}  f: {f:.3f}  シンメトリー係数(S): {symmetry:.3f}"""
             )
-
