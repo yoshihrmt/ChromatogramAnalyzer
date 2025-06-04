@@ -161,6 +161,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 uploaded_files = st.file_uploader(
+    "",
     type=["xlsx", "xls"],
     accept_multiple_files=True
 )
