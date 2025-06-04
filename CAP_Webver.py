@@ -137,6 +137,7 @@ if uploaded_files:
                 st.write(traceback.format_exc())
 
 if uploaded_files and file_info_list:
+    file_info_list = []
     with st.sidebar:
         st.markdown(
         """
