@@ -180,7 +180,7 @@ if uploaded_files and file_info_list:
         """,
         unsafe_allow_html=True
     )
-            st.markdown(
+        st.markdown(
             """
             <div style="
             background: #2c2c2c;
