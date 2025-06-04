@@ -64,7 +64,7 @@ with st.sidebar:
     st.markdown(
     """
     <h2 style="
-        background: #fff;
+        background: #ececec;
         text-align:center;
         margin-bottom:0;
         ">
@@ -86,7 +86,7 @@ with st.sidebar:
     st.markdown(
     """
     <h2 style="
-        background: #fff;
+        background: #ececec;
         text-align:center;
         margin-bottom:0;
         ">
@@ -101,7 +101,7 @@ with st.sidebar:
     st.markdown(
     """
     <h2 style="
-        background: #fff;
+        background: #ececec;
         text-align:center;
         margin-bottom:0;
         ">
