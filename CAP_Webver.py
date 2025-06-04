@@ -11,23 +11,17 @@ import urllib.request
 import os
 import traceback
 
-FONT_URL = "<https://github.com/alq666/wancho/releases/download/v1.100/texgyretermes-regular.otf>"
-FONT_PATH = "texgyretermes-regular.otf"
-# フォントが無ければダウンロード
-if not os.path.exists(FONT_PATH):
-    try:
+FONT_URL = "<https://github.com/google/fonts/raw/main/ofl/ebgaramond/EBGaramond-Regular.ttf>"
+FONT_PATH = "EBGaramond-Regular.ttf"
+try:
+    if not os.path.exists(FONT_PATH):
         urllib.request.urlretrieve(FONT_URL, FONT_PATH)
-    except Exception as e:
-        st.error(f"[致命的] フォントのダウンロードに失敗: {e}")
-        st.stop()
-if not os.path.exists(FONT_PATH):
-    st.error("[致命的] フォントファイルが見つかりません")
-    st.stop()
-font_prop = FontProperties(fname=FONT_PATH)
-
-plt.rcParams['font.family'] = 'serif'
-plt.rcParams['font.serif'] = ['TeX Gyre Termes', 'Times New Roman', 'Times', 'serif']
-plt.rcParams['mathtext.fontset'] = 'cm'
+    font_prop = FontProperties(fname=FONT_PATH)
+    plt.rcParams['font.family'] = 'EB Garamond'
+except Exception as e:
+    st.warning("カスタムフォントのダウンロードに失敗したため、標準のserifフォントで描画します。")
+    font_prop = FontProperties(family='serif')
+    plt.rcParams['font.family'] = 'serif'
 
 st.markdown("""
 <style>
