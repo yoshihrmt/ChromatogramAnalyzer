@@ -56,6 +56,7 @@ def calculate_peak_parameters(data, time, peak_index):
 
 st.title("Chromatogram Analyzer")
 
+auto_xmin, auto_xmax, auto_ymin, auto_ymax = 0.0, 10.0, 0.0, 200.0
 # サイドバー
 with st.sidebar:
     st.header("グラフ詳細設定")
