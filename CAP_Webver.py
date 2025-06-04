@@ -10,9 +10,17 @@ from scipy.integrate import simpson
 import io
 import traceback
 
-plt.rcParams['font.family'] = 'EB Garamond'
+# --- フォントプロパティの用意 ---
+font_path = "fonts/EBGaramond-Regular.ttf"
+if not os.path.exists(font_path):
+    st.warning("フォントファイルが見つかりません。serifで表示します。")
+    font_prop = FontProperties(family="serif")
+else:
+    font_prop = FontProperties(fname=font_path)
 
-# Streamlit全体CSSでserif化（ブラウザ依存）
+plt.rcParams['mathtext.fontset'] = 'cm'
+
+# Streamlit全体CSSでserif化
 st.markdown("""
 <style>
 html, body, [class*="css"]  {
@@ -164,8 +172,10 @@ if uploaded_files and file_info_list:
         ax.spines[spine].set_visible(False)
     ax.set_yticks([])
 
+    # すべてEB Garamond
     ax.set_xlabel("Time /min", fontsize=font_xlabel, fontproperties=font_prop)
     ax.set_ylabel("Absorbance /-", fontsize=font_ylabel, fontproperties=font_prop)
+    ax.set_title("Chromatogram", fontproperties=font_prop)
     ylim = ax.get_ylim()
     xlim = ax.get_xlim()
     arrow_x = xlim[0]
@@ -180,8 +190,10 @@ if uploaded_files and file_info_list:
     if show_legend:
         font_legend_prop = FontProperties(fname=getattr(font_prop, 'fname', None) or '', size=font_legend) if hasattr(font_prop, 'fname') else FontProperties(family='serif', size=font_legend)
         ax.legend(handles=handles, prop=font_legend_prop)
+    # 目盛もすべて
     for label in ax.get_xticklabels() + ax.get_yticklabels():
         label.set_fontproperties(font_prop)
+    # スケールバーなど
     if show_scalebar:
         current_xlim = ax.get_xlim()
         current_ylim = ax.get_ylim()
