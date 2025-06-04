@@ -67,21 +67,22 @@ def calculate_peak_parameters(data, time, peak_index):
 st.markdown(
     """
     <div style="
-        background: #222;
-        color: #fff;
-        border-radius: 16px;
-        padding: 10px 0 6px 0;
-        margin-bottom: 18px;
-        font-size: 1.8rem;
-        font-weight: bold;
-        text-align: center;
-        font-family: 'EB Garamond';
-        ">
-        Chromatogram Analyzer
+    background: #222;
+    color: #fff;
+    border-radius: 16px;
+    padding: 10px 0 6px 0;
+    margin-bottom: 18px;
+    font-size: 1.8rem;
+    font-weight: bold;
+    text-align: center;
+    font-family: 'EB Garamond', 'Times New Roman', Times, serif;
+    ">
+    Chromatogram Analyzer
     </div>
     """,
     unsafe_allow_html=True
-    )
+)
+
 
 uploaded_files = st.file_uploader(
     "Excelファイルを複数選択してください",
