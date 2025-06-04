@@ -192,24 +192,24 @@ if uploaded_files and file_info_list:
         ax.legend(handles=handles, prop=font_legend_prop)
 
     if show_scalebar:
-    current_xlim = ax.get_xlim()
-    current_ylim = ax.get_ylim()
-    x_pos = current_xlim[0] + (current_xlim[1] - current_xlim[0]) * scale_x_pos
-    y_start = current_ylim[0] + (current_ylim[1] - current_ylim[0]) * scale_y_pos
-    ax.annotate(
-        '', xy=(x_pos, y_start), xytext=(x_pos, y_start + scale_value),
-        arrowprops=dict(arrowstyle='<->', linewidth=1)
-    )
-    # ここで一度デバッグ表示
-    st.write("font_scale_value:", font_scale_value)
-    ax.text(
-        x_pos + (current_xlim[1] - current_xlim[0]) * 0.01,
-        y_start + scale_value / 2,
-        f"{scale_value} mV",
-        va='center', ha='left',
-        fontsize=font_scale_value,
-        fontproperties=font_prop
-    )
+        current_xlim = ax.get_xlim()
+        current_ylim = ax.get_ylim()
+        x_pos = current_xlim[0] + (current_xlim[1] - current_xlim[0]) * scale_x_pos
+        y_start = current_ylim[0] + (current_ylim[1] - current_ylim[0]) * scale_y_pos
+        ax.annotate(
+            '', xy=(x_pos, y_start), xytext=(x_pos, y_start + scale_value),
+            arrowprops=dict(arrowstyle='<->', linewidth=1)
+        )
+        # ここで一度デバッグ表示
+        st.write("font_scale_value:", font_scale_value)
+        ax.text(
+            x_pos + (current_xlim[1] - current_xlim[0]) * 0.01,
+            y_start + scale_value / 2,
+            f"{scale_value} mV",
+            va='center', ha='left',
+            fontsize=font_scale_value,
+            fontproperties=font_prop
+        )
 
 
     st.pyplot(fig)
