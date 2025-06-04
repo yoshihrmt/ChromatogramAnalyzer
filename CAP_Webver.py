@@ -2,20 +2,23 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-plt.rcParams['font.family'] = 'serif'
-plt.rcParams['font.serif'] = ['Times New Roman', 'Times', 'serif']
-plt.rcParams['mathtext.fontset'] = 'cm'
-plt.rcParams['axes.unicode_minus'] = False
+import matplotlib
 import matplotlib.lines as mlines
 from scipy.signal import find_peaks
 from scipy.integrate import simpson
 import io
 
-# フォント全体設定
+# matplotlibのグローバルなフォント設定をserifへ統一
+plt.rcParams['font.family'] = 'serif'
+plt.rcParams['font.serif'] = ['Times New Roman', 'Times', 'serif']
+plt.rcParams['mathtext.fontset'] = 'cm'              # 数式もserifに
+plt.rcParams['axes.unicode_minus'] = False           # マイナス記号を正しく出力
+
+# Streamlit全体のCSS指定（日本語含めシステムフォントでserif化/必要なら修正）
 st.markdown("""
 <style>
 html, body, [class*="css"]  {
-font-family: ,Times, serif !important;
+font-family: "Times New Roman", Times, serif !important;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -65,7 +68,7 @@ uploaded_files = st.file_uploader(
     accept_multiple_files=True
 )
 
-# ↓↓↓ 軸範囲の自動計算変数の初期化
+# 軸範囲の自動計算変数の初期化
 auto_xmin, auto_xmax, auto_ymin, auto_ymax = 0.0, 10.0, 0.0, 200.0
 file_info_list = []
 
@@ -184,9 +187,9 @@ if uploaded_files:
         ax.spines[spine].set_visible(False)
     ax.set_yticks([])
 
-    # ラベル・装飾
-    ax.set_xlabel("Time /min", fontsize=font_xlabel)
-    ax.set_ylabel("Absorbance /-", fontsize=font_ylabel)
+    # ラベル・装飾 (fontnameでserif系明示)
+    ax.set_xlabel("Time /min", fontsize=font_xlabel, fontname='Times New Roman')
+    ax.set_ylabel("Absorbance /-", fontsize=font_ylabel, fontname='Times New Roman')
 
     # y軸の上向き矢印
     ylim = ax.get_ylim()
@@ -202,8 +205,12 @@ if uploaded_files:
 
     # カスタム凡例
     if show_legend:
-        ax.legend(handles=handles, fontsize=font_legend)
+        ax.legend(handles=handles, fontsize=font_legend, prop={'family': 'serif', 'serif': ['Times New Roman', 'Times', 'serif']})
     ax.tick_params(axis='both', labelsize=font_tick)
+
+    # 目盛もserif化
+    for label in ax.get_xticklabels() + ax.get_yticklabels():
+        label.set_fontname('Times New Roman')
 
     # スケールバー
     if show_scalebar:
@@ -218,7 +225,7 @@ if uploaded_files:
         ax.text(
             x_pos + (current_xlim[1] - current_xlim[0])*0.01,
             y_start + scale_value / 2,
-            f"{scale_value} mV", va='center', ha='left', fontsize=font_xlabel
+            f"{scale_value} mV", va='center', ha='left', fontsize=font_xlabel, fontname='Times New Roman'
         )
 
     st.pyplot(fig)
@@ -247,3 +254,4 @@ if uploaded_files:
             st.write(
                 f"""ピーク {i}:  保持時間: {info['time'][peak]:.2f}分  ピーク高さ: {info['data'][peak]:.2f}mV  面積: {area:.2f}  W_0.05h: {W_0_05h:.3f}  f: {f:.3f}  シンメトリー係数(S): {symmetry:.3f}"""
             )
+
