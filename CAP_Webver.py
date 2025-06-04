@@ -8,14 +8,16 @@ from scipy.signal import find_peaks
 from scipy.integrate import simpson
 import io
 
-# フォント全体設定
-st.markdown("""
+st.markdown(
+"""
 <style>
-html, body, [class*="css"]  {
-font-family: Times, serif !important;
+html, body, [class*="css"] {
+    font-family: 'Times New Roman', Times, serif !important;
 }
 </style>
-""", unsafe_allow_html=True)
+""",
+unsafe_allow_html=True
+)
 
 colors = [
     'navy', 'crimson', 'forestgreen', 'darkorange', 'purple', 'teal', 'maroon',
@@ -25,10 +27,10 @@ colors = [
     'seagreen', 'darkcyan', 'darkkhaki', 'sienna', 'royalblue', 'darkslateblue',
     'darkgoldenrod', 'mediumorchid', 'mediumblue', 'indianred', 'mediumseagreen',
     'peru', 'slateblue', 'olivedrab', 'rosybrown', 'mediumvioletred'
-]
+    ]
 markers = [
     'o', 's', '^', 'v', 'd', 'x', '+', '<', '>', '*', 'p', 'h', 'H', 'D', '|', '_', '8'
-]
+    ]
 
 # 軸初期値
 auto_xmin, auto_xmax, auto_ymin, auto_ymax = 0.0, 10.0, 0.0, 200.0
@@ -68,6 +70,7 @@ st.markdown(
         font-size: 1.8rem;
         font-weight: bold;
         text-align: center;
+        font-family: 'Times New Roman', Times, serif;
         ">
         Chromatogram Analyzer
     </div>
@@ -88,6 +91,7 @@ with st.sidebar:
             font-size: 1.3rem;
             font-weight: bold;
             text-align: center;
+            font-family: 'Times New Roman', Times, serif;
             ">
             グラフ詳細設定
         </div>
@@ -115,6 +119,7 @@ with st.sidebar:
         font-size: 1.3rem;
         font-weight: bold;
         text-align: center;
+        font-family: 'Times New Roman', Times, serif;
         ">
         ピーク検出パラメータ
     </div>
