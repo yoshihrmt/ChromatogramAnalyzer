@@ -30,31 +30,6 @@ markers = [
     'o', 's', '^', 'v', 'd', 'x', '+', '<', '>', '*', 'p', 'h', 'H', 'D', '|', '_', '8'
 ]
 
-# サイドバー
-with st.sidebar:
-    st.header("グラフ詳細設定")
-    xaxis_auto = st.checkbox("x軸を自動", value=True)
-    yaxis_auto = st.checkbox("y軸を自動", value=True)
-    x_min = st.number_input("x軸最小(分)", value=0, disabled=xaxis_auto)
-    x_max = st.number_input("x軸最大(分)", value=auto_xmax, disabled=xaxis_auto)
-    y_min = st.number_input("y軸最小(mV)", value=-10, disabled=yaxis_auto)
-    y_max = st.number_input("y軸最大(mV)", value=auto_ymax, disabled=yaxis_auto)
-    show_scalebar = st.checkbox("スケールバーを表示", value=True)
-    scale_value = st.number_input("スケールバー値(mV)", value=50)
-    scale_x_pos = st.slider("スケールバー x位置（0=左, 1=右）", 0.0, 1.0, 0.7, 0.01)
-    scale_y_pos = st.slider("スケールバー y位置（0=下, 1=上）", 0.0, 1.0, 0.15, 0.01)
-    st.header("ピーク検出パラメータ")
-    peak_height = st.number_input("最低ピーク高さ（mV）", value=10.0, min_value=0.0, step=1.0)
-    peak_prominence = st.number_input("ピークの顕著さ（prominence）", value=0.5, min_value=0.0, step=0.1)
-    peak_width = st.number_input("ピークの最低幅（width）", value=10, min_value=1, step=1)
-    font_xlabel = st.slider("x軸ラベルフォント", 6, 30, 14)
-    font_ylabel = st.slider("y軸ラベルフォント", 6, 30, 14)
-    font_legend = st.slider("凡例フォント", 6, 24, 10)
-    font_tick = st.slider("目盛フォント", 6, 20, 10)
-
-show_peaks = st.checkbox("ピークマーカーを表示（全データ）", True)
-show_legend = st.checkbox("凡例を表示", True)
-
 def process_chromatogram_data(df):
     df['height(mV)'] = df['height(uV)'].replace([np.inf, -np.inf], np.nan).fillna(0) / 1000
     df['time(min)'] = df['time(sec)'].replace([np.inf, -np.inf], np.nan).fillna(0) / 60
@@ -80,6 +55,32 @@ def calculate_peak_parameters(data, time, peak_index):
     return symmetry, W_0_05h, f
 
 st.title("Chromatogram Analyzer")
+
+# サイドバー
+with st.sidebar:
+    st.header("グラフ詳細設定")
+    xaxis_auto = st.checkbox("x軸を自動", value=True)
+    yaxis_auto = st.checkbox("y軸を自動", value=True)
+    x_min = st.number_input("x軸最小(分)", value=0, disabled=xaxis_auto)
+    x_max = st.number_input("x軸最大(分)", value=auto_xmax, disabled=xaxis_auto)
+    y_min = st.number_input("y軸最小(mV)", value=-10, disabled=yaxis_auto)
+    y_max = st.number_input("y軸最大(mV)", value=auto_ymax, disabled=yaxis_auto)
+    show_scalebar = st.checkbox("スケールバーを表示", value=True)
+    scale_value = st.number_input("スケールバー値(mV)", value=50)
+    scale_x_pos = st.slider("スケールバー x位置（0=左, 1=右）", 0.0, 1.0, 0.7, 0.01)
+    scale_y_pos = st.slider("スケールバー y位置（0=下, 1=上）", 0.0, 1.0, 0.15, 0.01)
+    st.header("ピーク検出パラメータ")
+    peak_height = st.number_input("最低ピーク高さ（mV）", value=10.0, min_value=0.0, step=1.0)
+    peak_prominence = st.number_input("ピークの顕著さ（prominence）", value=0.5, min_value=0.0, step=0.1)
+    peak_width = st.number_input("ピークの最低幅（width）", value=10, min_value=1, step=1)
+    font_xlabel = st.slider("x軸ラベルフォント", 6, 30, 14)
+    font_ylabel = st.slider("y軸ラベルフォント", 6, 30, 14)
+    font_legend = st.slider("凡例フォント", 6, 24, 10)
+    font_tick = st.slider("目盛フォント", 6, 20, 10)
+
+show_peaks = st.checkbox("ピークマーカーを表示（全データ）", True)
+show_legend = st.checkbox("凡例を表示", True)
+
 
 uploaded_files = st.file_uploader(
     "Excelファイルを複数選択してください",
