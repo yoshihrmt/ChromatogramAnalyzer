@@ -56,14 +56,14 @@ def calculate_peak_parameters(data, time, peak_index):
 
 st.title("Chromatogram Analyzer")
 
-# 軸/初期値
+# 軸初期値
 auto_xmin, auto_xmax, auto_ymin, auto_ymax = 0.0, 10.0, 0.0, 200.0
 
-# サイドバー設定
+# ================== サイドバー ================== #
 with st.sidebar:
     st.header("グラフ詳細設定")
-    show_peaks = st.checkbox("ピークマーカーを表示（全データ）", True)
-    show_legend = st.checkbox("凡例を表示", True)
+    xaxis_auto = st.checkbox("x軸を自動", value=True)
+    yaxis_auto = st.checkbox("y軸を自動", value=True)
     x_min = st.number_input("x軸最小(分)", value=auto_xmin, disabled=xaxis_auto)
     x_max = st.number_input("x軸最大(分)", value=auto_xmax, disabled=xaxis_auto)
     y_min = st.number_input("y軸最小(mV)", value=auto_ymin, disabled=yaxis_auto)
@@ -80,8 +80,10 @@ with st.sidebar:
     font_ylabel = st.slider("y軸ラベルフォント", 6, 30, 14)
     font_legend = st.slider("凡例フォント", 6, 24, 10)
     font_tick = st.slider("目盛フォント", 6, 20, 10)
+    show_peaks = st.checkbox("ピークマーカーを表示（全データ）", True)
+    show_legend = st.checkbox("凡例を表示", True)
 
-# アップロード
+# ============ ファイルアップロード・前処理 ============= #
 uploaded_files = st.file_uploader(
     "Excelファイルを複数選択してください",
     type=["xlsx", "xls"],
@@ -132,7 +134,7 @@ if uploaded_files:
             ymax_total.append(np.max(data))
         except Exception as e:
             st.error(f"{uploaded_file.name}: エラー発生({e})")
-    # 軸の自動計算
+    # 軸範囲の自動計算
     if xmin_total and xmax_total:
         auto_xmin = min(xmin_total)
         auto_xmax = float(np.max(xmax_total))
@@ -140,7 +142,7 @@ if uploaded_files:
         auto_ymin = min(ymin_total)
         auto_ymax = float(np.max(ymax_total)) * 1.1
 
-# グラフ描画
+# =================== グラフ描画 ===================== #
 if uploaded_files and file_info_list:
     fig, ax = plt.subplots(figsize=(9, 4))
     handles = []
@@ -160,8 +162,10 @@ if uploaded_files and file_info_list:
                 linestyle="None", markersize=6,
                 markerfacecolor=color, markeredgecolor=color, label=None
             )
+        # 凡例Line2D
         legend_line = mlines.Line2D(
-            [], [], color=color, marker=marker if show_peaks and len(peaks) > 0 else None,
+            [], [], color=color,
+            marker=marker if show_peaks and len(peaks) > 0 else None,
             linestyle='-', label=legend, markersize=6,
             markerfacecolor=color, markeredgecolor=color
         )
