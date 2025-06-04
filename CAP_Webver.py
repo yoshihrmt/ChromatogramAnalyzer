@@ -72,7 +72,7 @@ uploaded_files = st.file_uploader(
     accept_multiple_files=True
 )
 
-auto_xmin, auto_xmax, auto_ymin, auto_ymax = 0.0, 10.0, 0.0, 200.0
+auto_xmin, auto_xmax, auto_ymin, auto_ymax = 0.0, .0, 0.0, 200.0
 file_info_list = []
 
 if uploaded_files:
@@ -130,7 +130,7 @@ if uploaded_files and file_info_list:
         font_xlabel = st.slider("x軸ラベルフォント", 6, 30, 18, key="font_xlabel")
         font_ylabel = st.slider("y軸ラベルフォント", 6, 30, 18, key="font_ylabel")
         font_legend = st.slider("凡例フォント", 6, 24, 14, key="font_legend")
-        font_tick = st.slider("目盛フォント", 6, 20, 10, key="font_tick")
+        font_tick = st.slider("目盛フォント", 6, 20, 14, key="font_tick")
         show_peaks = st.checkbox("ピークマーカーを表示（全データ）", True, key="show_peaks")
         show_legend = st.checkbox("凡例を表示", True, key="show_legend")
 
