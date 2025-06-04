@@ -80,8 +80,6 @@ with st.sidebar:
     font_ylabel = st.slider("y軸ラベルフォント", 6, 30, 14)
     font_legend = st.slider("凡例フォント", 6, 24, 10)
     font_tick = st.slider("目盛フォント", 6, 20, 10)
-    show_peaks = st.checkbox("ピークマーカーを表示（全データ）", True)
-    show_legend = st.checkbox("凡例を表示", True)
 
 # ============ ファイルアップロード・前処理 ============= #
 uploaded_files = st.file_uploader(
