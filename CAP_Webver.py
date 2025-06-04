@@ -175,7 +175,6 @@ if uploaded_files and file_info_list:
     # すべてEB Garamond
     ax.set_xlabel("Time /min", fontsize=font_xlabel, fontproperties=font_prop)
     ax.set_ylabel("Absorbance /-", fontsize=font_ylabel, fontproperties=font_prop)
-    ax.set_title("Chromatogram", fontproperties=font_prop)
     ylim = ax.get_ylim()
     xlim = ax.get_xlim()
     arrow_x = xlim[0]
