@@ -13,7 +13,8 @@ import io
 st.markdown("""
 <style>
 html, body, [class*="css"] {
-    font-family: 'MS Gothic', 'ＭＳ ゴシック', 'Yu Gothic', 'Meiryo', monospace, sans-serif !important;
+    font-family: 'Times New Roman', '游明朝', 'Yu Mincho', 'serif';
+!important;
 }
 </style>
 """, unsafe_allow_html=True)
