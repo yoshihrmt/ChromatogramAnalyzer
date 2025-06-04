@@ -228,8 +228,8 @@ if uploaded_files and file_info_list:
         file_name="chromatogram.pdf",
         mime="application/pdf"
     )
-show_peaks = st.checkbox("ピークマーカーを表示（全データ）", True)
-show_legend = st.checkbox("凡例を表示", True)
+    show_peaks = st.checkbox("ピークマーカーを表示（全データ）", True)
+    show_legend = st.checkbox("凡例を表示", True)
 
     # 解析結果表示
     st.markdown("### 解析結果")
