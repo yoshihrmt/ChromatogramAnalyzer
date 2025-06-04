@@ -10,7 +10,7 @@ from scipy.integrate import simpson
 import io
 import traceback
 
-plt.rcParams['mathtext.fontset'] = 'cm'
+plt.rcParams['font.family'] = 'EB Garamond'
 
 # Streamlit全体CSSでserif化（ブラウザ依存）
 st.markdown("""
