@@ -64,96 +64,100 @@ def calculate_peak_parameters(data, time, peak_index):
     return symmetry, W_0_05h, f
 
 st.markdown(
-"""
-<div style="
-background: #2c2c2c;
-color: #fff;
-border-radius: 16px;
-padding: 10px 0 6px 0;
-margin-bottom: 18px;
-font-size: 1.8rem;
-font-weight: bold;
-text-align: center;
-font-family: 'EB Garamond', 'Times New Roman', Times, serif;
-">
-Chromatogram Analyzer
-</div>
-""",
-unsafe_allow_html=True
+    """
+    <div style="
+    background: #2c2c2c;
+    color: #fff;
+    border-radius: 16px;
+    padding: 10px 0 6px 0;
+    margin-bottom: 18px;
+    font-size: 1.8rem;
+    font-weight: bold;
+    text-align: center;
+    font-family: 'EB Garamond', 'Times New Roman', Times, serif;
+    ">
+    Chromatogram Analyzer
+    </div>
+    """,
+    unsafe_allow_html=True
 )
 
 # --- サイドバーでパラメータを必ず定義 ---
 with st.sidebar:
-        st.markdown(
-            """
-            <div style="
-            background: #2c2c2c;
-            color: #fff;
-            border-radius: 16px;
-            padding: 10px 0 6px 0;
-            margin-bottom: 18px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            text-align: center;
-            font-family: 'EB Garamond', 'Times New Roman', Times, serif;
-            ">
-            グラフ詳細
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-        xaxis_auto = st.checkbox("x軸を自動", value=True, key="xaxis_auto")
-        yaxis_auto = st.checkbox("y軸を自動", value=True, key="yaxis_auto")
-        x_min = st.number_input("x軸最小(分)", value=0.0, disabled=xaxis_auto, key="x_min")
-        x_max = st.number_input("x軸最大(分)", value=float(np.max(xmax_total)) if xmax_total else 10.0, disabled=xaxis_auto, key="x_max")
-        y_min = st.number_input("y軸最小(mV)", value=-10.0, disabled=yaxis_auto, key="y_min")
-        y_max = st.number_input("y軸最大(mV)", value=float(np.max(ymax_total))*1.1 if ymax_total else 200.0, disabled=yaxis_auto, key="y_max")
-        st.markdown(
-            """
-            <div style="
-            background: #2c2c2c;
-            color: #fff;
-            border-radius: 16px;
-            padding: 10px 0 6px 0;
-            margin-bottom: 18px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            text-align: center;
-            font-family: 'EB Garamond', 'Times New Roman', Times, serif;
-            ">
-            スケールバー
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-        show_scalebar = st.checkbox("スケールバーを表示", value=True, key="show_scalebar")
-        scale_value = st.number_input("スケールバー値(mV)", value=50, key="scale_value")
-        scale_x_pos = st.slider("スケールバー x位置（0=左, 1=右）", 0.0, 1.0, 0.7, 0.1, key="scale_x_pos")
-        scale_y_pos = st.slider("スケールバー y位置（0=下, 1=上）", 0.0, 1.0, 0.15, 0.1, key="scale_y_pos")
-        st.markdown(
-            """
-            <div style="
-            background: #2c2c2c;
-            color: #fff;
-            border-radius: 16px;
-            padding: 10px 0 6px 0;
-            margin-bottom: 18px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            text-align: center;
-            font-family: 'EB Garamond', 'Times New Roman', Times, serif;
-            ">
-            フォントサイズ
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-        font_xlabel = st.slider("x軸ラベルフォント", 10, 30, 19, key="font_xlabel")
-        font_ylabel = st.slider("y軸ラベルフォント", 10, 30, 19, key="font_ylabel")
-        font_legend = st.slider("凡例フォント", 5, 22, 13, key="font_legend")
-        font_tick = st.slider("x軸値フォント", 5, 18, 11, key="font_tick")
-        font_scale_value = st.slider("スケールバー値フォント", 10, 26, 17, key="font_scale_value")
-        st.markdown(
+    st.markdown(
+        """
+        <div style="
+        background: #2c2c2c;
+        color: #fff;
+        border-radius: 16px;
+        padding: 10px 0 6px 0;
+        margin-bottom: 18px;
+        font-size: 1.2rem;
+        font-weight: bold;
+        text-align: center;
+        font-family: 'EB Garamond', 'Times New Roman', Times, serif;
+        ">
+        グラフ詳細
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+    # 変数の初期化は先
+    auto_xmin, auto_xmax, auto_ymin, auto_ymax = 0.0, 10.0, 0.0, 200.0
+    xmax_total, ymax_total = [], []
+
+    xaxis_auto = st.checkbox("x軸を自動", value=True, key="xaxis_auto")
+    yaxis_auto = st.checkbox("y軸を自動", value=True, key="yaxis_auto")
+    x_min = st.number_input("x軸最小(分)", value=0.0, disabled=xaxis_auto, key="x_min")
+    x_max = st.number_input("x軸最大(分)", value=10.0, disabled=xaxis_auto, key="x_max")
+    y_min = st.number_input("y軸最小(mV)", value=-10.0, disabled=yaxis_auto, key="y_min")
+    y_max = st.number_input("y軸最大(mV)", value=200.0, disabled=yaxis_auto, key="y_max")
+    st.markdown(
+        """
+        <div style="
+        background: #2c2c2c;
+        color: #fff;
+        border-radius: 16px;
+        padding: 10px 0 6px 0;
+        margin-bottom: 18px;
+        font-size: 1.2rem;
+        font-weight: bold;
+        text-align: center;
+        font-family: 'EB Garamond', 'Times New Roman', Times, serif;
+        ">
+        スケールバー
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+    show_scalebar = st.checkbox("スケールバーを表示", value=True, key="show_scalebar")
+    scale_value = st.number_input("スケールバー値(mV)", value=50, key="scale_value")
+    scale_x_pos = st.slider("スケールバー x位置（0=左, 1=右）", 0.0, 1.0, 0.7, 0.1, key="scale_x_pos")
+    scale_y_pos = st.slider("スケールバー y位置（0=下, 1=上）", 0.0, 1.0, 0.15, 0.1, key="scale_y_pos")
+    st.markdown(
+        """
+        <div style="
+        background: #2c2c2c;
+        color: #fff;
+        border-radius: 16px;
+        padding: 10px 0 6px 0;
+        margin-bottom: 18px;
+        font-size: 1.2rem;
+        font-weight: bold;
+        text-align: center;
+        font-family: 'EB Garamond', 'Times New Roman', Times, serif;
+        ">
+        フォントサイズ
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+    font_xlabel = st.slider("x軸ラベルフォント", 10, 30, 19, key="font_xlabel")
+    font_ylabel = st.slider("y軸ラベルフォント", 10, 30, 19, key="font_ylabel")
+    font_legend = st.slider("凡例フォント", 5, 22, 13, key="font_legend")
+    font_tick = st.slider("x軸値フォント", 5, 18, 11, key="font_tick")
+    font_scale_value = st.slider("スケールバー値フォント", 10, 26, 17, key="font_scale_value")
+    st.markdown(
         """
         <div style="
         background: #2c2c2c;
@@ -170,10 +174,12 @@ with st.sidebar:
         </div>
         """, unsafe_allow_html=True
     )
-    
-peak_width = st.slider("ピーク幅 (width)", min_value=1, max_value=100, value=10, step=1)
-peak_height = st.number_input("高さしきい値 (height, mV)", min_value=0.0, max_value=1000.0, value=10.0, step=0.1)
-peak_prominence = st.number_input("突出度 (prominence)", min_value=0.0, max_value=100.0, value=0.5, step=0.1)
+    peak_width = st.slider("ピーク幅 (width)", min_value=1, max_value=100, value=10, step=1)
+    peak_height = st.number_input("高さしきい値 (height, mV)", min_value=0.0, max_value=1000.0, value=10.0, step=0.1)
+    peak_prominence = st.number_input("突出度 (prominence)", min_value=0.0, max_value=100.0, value=0.5, step=0.1)
+    # ここに追加
+    show_peaks = st.checkbox("ピークマーカーを表示", value=True, key="show_peaks_inline")
+    show_legend = st.checkbox("凡例を表示", value=True, key="show_legend_inline")
 
 # --- ファイルアップロード ---
 uploaded_files = st.file_uploader(
@@ -182,7 +188,6 @@ uploaded_files = st.file_uploader(
     accept_multiple_files=True
 )
 
-auto_xmin, auto_xmax, auto_ymin, auto_ymax = 0.0, 10.0, 0.0, 200.0
 file_info_list = []
 
 if uploaded_files:
@@ -202,7 +207,6 @@ if uploaded_files:
             df = process_chromatogram_data(df)
             data = df['height(mV)'].values
             time = df['time(min)'].values
-            # ここでサイドバーで取得したパラメータを使う
             peaks, _ = find_peaks(
                 data,
                 height=peak_height,
@@ -231,19 +235,23 @@ if uploaded_files:
                 st.write(traceback.format_exc())
 
 if uploaded_files and file_info_list:
-        show_peaks = st.checkbox("ピークマーカーを表示", value=True, key="show_peaks_inline")
-        show_legend = st.checkbox("凡例を表示", value=True, key="show_legend_inline")
+    if not xaxis_auto and xmin_total and xmax_total:
+        x_min = min(xmin_total)
+        x_max = max(xmax_total)
+    if not yaxis_auto and ymin_total and ymax_total:
+        y_min = min(ymin_total)
+        y_max = max(ymax_total) * 1.1
 
-        fig, ax = plt.subplots(figsize=(9, 4))
-        handles = []
-    
-        for idx, info in enumerate(file_info_list):
-            data = info["data"]
-            time = info["time"]
-            peaks = info["peaks"]
-            color = info["color"]
-            marker = info["marker"]
-            legend = info["legend"]
+    fig, ax = plt.subplots(figsize=(9, 4))
+    handles = []
+
+    for idx, info in enumerate(file_info_list):
+        data = info["data"]
+        time = info["time"]
+        peaks = info["peaks"]
+        color = info["color"]
+        marker = info["marker"]
+        legend = info["legend"]
 
         ax.plot(time, data, label=legend, color=color)
         if show_peaks and len(peaks) > 0:
