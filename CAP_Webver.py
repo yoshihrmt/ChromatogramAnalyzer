@@ -145,10 +145,23 @@ show_peaks = st.checkbox("ピークマーカーを表示（全データ）", Tru
 show_legend = st.checkbox("凡例を表示", True)
 
 if uploaded_files:
+    legends = []
     fig, ax = plt.subplots(figsize=(9, 4))
     handles = []  # 凡例用Line2Dオブジェクト
 
     for idx, info in enumerate(file_info_list):
+        try:
+            df = pd.read_excel(uploaded_file, sheet_name='RAW DATA')
+            df = process_chromatogram_data(df)
+            data = df['height(mV)'].values
+            time = df['time(min)'].values
+            # ここでサイドバーのパラメータを使う
+            peaks, _ = find_peaks(
+                data,
+                height=peak_height,
+                prominence=peak_prominence,
+                width=peak_width
+            )
         data = info["data"]
         time = info["time"]
         peaks = info["peaks"]
