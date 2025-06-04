@@ -62,14 +62,10 @@ auto_xmin, auto_xmax, auto_ymin, auto_ymax = 0.0, 10.0, 0.0, 200.0
 # サイドバー設定
 with st.sidebar:
     st.header("グラフ詳細設定")
-    xaxis_auto = st.checkbox("x軸を自動", value=True)
-    yaxis_auto = st.checkbox("y軸を自動", value=True)
     x_min = st.number_input("x軸最小(分)", value=auto_xmin, disabled=xaxis_auto)
     x_max = st.number_input("x軸最大(分)", value=auto_xmax, disabled=xaxis_auto)
     y_min = st.number_input("y軸最小(mV)", value=auto_ymin, disabled=yaxis_auto)
     y_max = st.number_input("y軸最大(mV)", value=auto_ymax, disabled=yaxis_auto)
-    show_peaks = st.checkbox("ピークマーカーを表示（全データ）", True)
-    show_legend = st.checkbox("凡例を表示", True)
     show_scalebar = st.checkbox("スケールバーを表示", value=True)
     scale_value = st.number_input("スケールバー値(mV)", value=50)
     scale_x_pos = st.slider("スケールバー x位置（0=左, 1=右）", 0.0, 1.0, 0.7, 0.01)
@@ -232,6 +228,8 @@ if uploaded_files and file_info_list:
         file_name="chromatogram.pdf",
         mime="application/pdf"
     )
+show_peaks = st.checkbox("ピークマーカーを表示（全データ）", True)
+show_legend = st.checkbox("凡例を表示", True)
 
     # 解析結果表示
     st.markdown("### 解析結果")
