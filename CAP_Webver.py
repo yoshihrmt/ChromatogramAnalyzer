@@ -8,22 +8,27 @@ from scipy.signal import find_peaks
 from scipy.integrate import simpson
 import io
 import urllib.request
+import os
 import traceback
 
-# ▼ ここでTimes New Roman互換フォントをダウンロード＆セット
 FONT_URL = "<https://github.com/alq666/wancho/releases/download/v1.100/texgyretermes-regular.otf>"
 FONT_PATH = "texgyretermes-regular.otf"
-try:
-    urllib.request.urlretrieve(FONT_URL, FONT_PATH)
-except Exception as e:
-    st.error(f"フォントのダウンロードに失敗しました: {e}")
+# フォントが無ければダウンロード
+if not os.path.exists(FONT_PATH):
+    try:
+        urllib.request.urlretrieve(FONT_URL, FONT_PATH)
+    except Exception as e:
+        st.error(f"[致命的] フォントのダウンロードに失敗: {e}")
+        st.stop()
+if not os.path.exists(FONT_PATH):
+    st.error("[致命的] フォントファイルが見つかりません")
+    st.stop()
 font_prop = FontProperties(fname=FONT_PATH)
 
 plt.rcParams['font.family'] = 'serif'
 plt.rcParams['font.serif'] = ['TeX Gyre Termes', 'Times New Roman', 'Times', 'serif']
 plt.rcParams['mathtext.fontset'] = 'cm'
 
-# Streamlit全体CSSでserif化（ページ内UIなどに影響）
 st.markdown("""
 <style>
 html, body, [class*="css"]  {
@@ -41,9 +46,7 @@ colors = [
     'darkgoldenrod', 'mediumorchid', 'mediumblue', 'indianred', 'mediumseagreen',
     'peru', 'slateblue', 'olivedrab', 'rosybrown', 'mediumvioletred'
 ]
-markers = [
-    'o', 's', '^', 'v', 'd', 'x', '+', '<', '>', '*', 'p', 'h', 'H', 'D', '|', '_', '8'
-]
+markers = ['o', 's', '^', 'v', 'd', 'x', '+', '<', '>', '*', 'p', 'h', 'H', 'D', '|', '_', '8']
 
 def process_chromatogram_data(df):
     df['height(mV)'] = df['height(uV)'].replace([np.inf, -np.inf], np.nan).fillna(0) / 1000
@@ -77,7 +80,6 @@ uploaded_files = st.file_uploader(
     accept_multiple_files=True
 )
 
-# 軸範囲自動計算の初期化
 auto_xmin, auto_xmax, auto_ymin, auto_ymax = 0.0, 10.0, 0.0, 200.0
 file_info_list = []
 
@@ -120,35 +122,6 @@ if uploaded_files:
             with st.expander("エラー詳細を表示"):
                 st.write(traceback.format_exc())
 
-if 'xmin_total' in locals() and xmin_total and xmax_total:
-    auto_xmin = 0
-    auto_xmax = float(np.max(xmax_total))
-if 'ymin_total' in locals() and ymin_total and ymax_total:
-    auto_ymin = -10
-    auto_ymax = float(np.max(ymax_total)) * 1.1
-else:
-    auto_ymin, auto_ymax = 0.0, 200.0
-
-# サイドバー
-with st.sidebar:
-    st.header("グラフ詳細設定")
-    xaxis_auto = st.checkbox("x軸を自動", value=True)
-    yaxis_auto = st.checkbox("y軸を自動", value=True)
-    x_min = st.number_input("x軸最小(分)", value=0.0, disabled=xaxis_auto)
-    x_max = st.number_input("x軸最大(分)", value=auto_xmax, disabled=xaxis_auto)
-    y_min = st.number_input("y軸最小(mV)", value=-10.0, disabled=yaxis_auto)
-    y_max = st.number_input("y軸最大(mV)", value=auto_ymax, disabled=yaxis_auto)
-    show_scalebar = st.checkbox("スケールバーを表示", value=True)
-    scale_value = st.number_input("スケールバー値(mV)", value=50)
-    scale_x_pos = st.slider("スケールバー x位置（0=左, 1=右）", 0.0, 1.0, 0.7, 0.01)
-    scale_y_pos = st.slider("スケールバー y位置（0=下, 1=上）", 0.0, 1.0, 0.15, 0.01)
-    font_xlabel = st.slider("x軸ラベルフォント", 6, 30, 14)
-    font_ylabel = st.slider("y軸ラベルフォント", 6, 30, 14)
-    font_legend = st.slider("凡例フォント", 6, 24, 10)
-    font_tick = st.slider("目盛フォント", 6, 20, 10)
-    show_peaks = st.checkbox("ピークマーカーを表示（全データ）", True)
-    show_legend = st.checkbox("凡例を表示", True)
-
 if uploaded_files and file_info_list:
     fig, ax = plt.subplots(figsize=(9, 4))
     handles = []  # 凡例用Line2Dオブジェクト
@@ -162,24 +135,46 @@ if uploaded_files and file_info_list:
         legend = info["legend"]
 
         ax.plot(time, data, label=legend, color=color)
-        # ピークマーカー
-        if show_peaks and len(peaks) > 0:
+        if st.session_state.get('show_peaks', True) and len(peaks) > 0:
             ax.plot(
                 time[peaks], data[peaks], marker,
                 linestyle="None", markersize=6,
                 markerfacecolor=color, markeredgecolor=color, label=None
             )
-            legend_line = mlines.Line2D(
-                [], [], color=color, marker=marker, linestyle='-',
-                label=legend, markersize=6,
-                markerfacecolor=color, markeredgecolor=color
-            )
+            legend_line = mlines.Line2D([], [], color=color, marker=marker, linestyle='-',
+                                        label=legend, markersize=6, markerfacecolor=color, markeredgecolor=color)
         else:
-            legend_line = mlines.Line2D(
-                [], [], color=color, marker=None, linestyle='-',
-                label=legend
-            )
+            legend_line = mlines.Line2D([], [], color=color, marker=None, linestyle='-',
+                                        label=legend)
         handles.append(legend_line)
+
+    # 軸範囲
+    if 'xmin_total' in locals() and xmin_total and xmax_total:
+        auto_xmin = 0
+        auto_xmax = float(np.max(xmax_total))
+    if 'ymin_total' in locals() and ymin_total and ymax_total:
+        auto_ymin = -10
+        auto_ymax = float(np.max(ymax_total)) * 1.1
+    else:
+        auto_ymin, auto_ymax = 0.0, 200.0
+    with st.sidebar:
+        st.header("グラフ詳細設定")
+        xaxis_auto = st.checkbox("x軸を自動", value=True, key="xaxis_auto")
+        yaxis_auto = st.checkbox("y軸を自動", value=True, key="yaxis_auto")
+        x_min = st.number_input("x軸最小(分)", value=0.0, disabled=xaxis_auto, key="x_min")
+        x_max = st.number_input("x軸最大(分)", value=auto_xmax, disabled=xaxis_auto, key="x_max")
+        y_min = st.number_input("y軸最小(mV)", value=-10.0, disabled=yaxis_auto, key="y_min")
+        y_max = st.number_input("y軸最大(mV)", value=auto_ymax, disabled=yaxis_auto, key="y_max")
+        show_scalebar = st.checkbox("スケールバーを表示", value=True, key="show_scalebar")
+        scale_value = st.number_input("スケールバー値(mV)", value=50, key="scale_value")
+        scale_x_pos = st.slider("スケールバー x位置（0=左, 1=右）", 0.0, 1.0, 0.7, 0.01, key="scale_x_pos")
+        scale_y_pos = st.slider("スケールバー y位置（0=下, 1=上）", 0.0, 1.0, 0.15, 0.01, key="scale_y_pos")
+        font_xlabel = st.slider("x軸ラベルフォント", 6, 30, 14, key="font_xlabel")
+        font_ylabel = st.slider("y軸ラベルフォント", 6, 30, 14, key="font_ylabel")
+        font_legend = st.slider("凡例フォント", 6, 24, 10, key="font_legend")
+        font_tick = st.slider("目盛フォント", 6, 20, 10, key="font_tick")
+        show_peaks = st.checkbox("ピークマーカーを表示（全データ）", True, key="show_peaks")
+        show_legend = st.checkbox("凡例を表示", True, key="show_legend")
 
     # 軸範囲
     if not xaxis_auto:
@@ -199,8 +194,6 @@ if uploaded_files and file_info_list:
     # ラベル・装飾
     ax.set_xlabel("Time /min", fontsize=font_xlabel, fontproperties=font_prop)
     ax.set_ylabel("Absorbance /-", fontsize=font_ylabel, fontproperties=font_prop)
-
-    # y軸の上向き矢印
     ylim = ax.get_ylim()
     xlim = ax.get_xlim()
     arrow_x = xlim[0]
@@ -212,16 +205,11 @@ if uploaded_files and file_info_list:
         clip_on=False
     )
 
-    # カスタム凡例
     if show_legend:
         font_legend_prop = FontProperties(fname=FONT_PATH, size=font_legend)
         ax.legend(handles=handles, prop=font_legend_prop)
-
-    # 目盛ラベルもフォント指定
     for label in ax.get_xticklabels() + ax.get_yticklabels():
         label.set_fontproperties(font_prop)
-
-    # スケールバー
     if show_scalebar:
         current_xlim = ax.get_xlim()
         current_ylim = ax.get_ylim()
@@ -250,7 +238,6 @@ if uploaded_files and file_info_list:
         mime="application/png"
     )
 
-    # 解析結果表示
     st.markdown("### 解析結果")
     for info in file_info_list:
         st.write(f"{info['legend']} … 検出されたピーク数: {len(info['peaks'])}")
