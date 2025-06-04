@@ -10,16 +10,13 @@ from scipy.signal import find_peaks
 from scipy.integrate import simpson
 import io
 
-st.markdown(
-"""
+st.markdown("""
 <style>
-html, body, [class*="css"] {
+html, body, [class*="css"], .stTextInput label, .stFileUploader label, .stSlider, .stNumberInput label, .stCheckbox label {
     font-family: 'Times New Roman', Times, serif !important;
 }
 </style>
-""",
-unsafe_allow_html=True
-)
+""", unsafe_allow_html=True)
 
 colors = [
     'navy', 'crimson', 'forestgreen', 'darkorange', 'purple', 'teal', 'maroon',
