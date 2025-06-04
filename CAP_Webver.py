@@ -10,6 +10,11 @@ from scipy.integrate import simpson
 import io
 import traceback
 
+st.write("Current working dir:", os.getcwd())
+st.write("Files in current dir:", os.listdir())
+st.write("Fonts dir exists?:", os.path.exists("fonts"))
+st.write("Font file exists?:", os.path.exists("fonts/EBGaramond-Regular.ttf"))
+
 # パス・存在確認情報を出力
 st.write("Current working dir:", os.getcwd())
 st.write("Font exists?:", os.path.exists("fonts/EBGaramond-Regular.ttf"))
