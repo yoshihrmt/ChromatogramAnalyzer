@@ -142,6 +142,7 @@ with st.sidebar:
         font-size: 1.3rem;
         font-weight: bold;
         text-align: center;
+        font-family: 'Times New Roman', Times, serif;
         ">
         フォントサイズ
     </div>
