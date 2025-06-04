@@ -210,6 +210,9 @@ if uploaded_files and file_info_list:
 
     st.pyplot(fig)
 
+    show_peaks = st.checkbox("ピークマーカーを表示（全データ）", value=True, key="show_peaks_inline")
+    show_legend = st.checkbox("凡例を表示", value=True, key="show_legend_inline")
+    
     buf = io.BytesIO()
     fig.savefig(buf, format="png", bbox_inches="tight")
     buf.seek(0)
