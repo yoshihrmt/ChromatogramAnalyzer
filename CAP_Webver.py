@@ -67,7 +67,7 @@ def calculate_peak_parameters(data, time, peak_index):
 st.markdown(
     """
     <div style="
-    background: #222;
+    background: #2c2c2c;
     color: #fff;
     border-radius: 16px;
     padding: 10px 0 6px 0;
@@ -137,12 +137,12 @@ if uploaded_files and file_info_list:
         st.markdown(
         """
         <div style="
-        background: #222;
+        background: #2c2c2c;
         color: #fff;
         border-radius: 16px;
         padding: 10px 0 6px 0;
         margin-bottom: 18px;
-        font-size: 1.8rem;
+        font-size: 1.2rem;
         font-weight: bold;
         text-align: center;
         font-family: 'EB Garamond', 'Times New Roman', Times, serif;
@@ -161,12 +161,12 @@ if uploaded_files and file_info_list:
         st.markdown(
         """
         <div style="
-        background: #222;
+        background: #2c2c2c;
         color: #fff;
         border-radius: 16px;
         padding: 10px 0 6px 0;
         margin-bottom: 18px;
-        font-size: 1.8rem;
+        font-size: 1.2rem;
         font-weight: bold;
         text-align: center;
         font-family: 'EB Garamond', 'Times New Roman', Times, serif;
@@ -183,12 +183,12 @@ if uploaded_files and file_info_list:
         st.markdown(
         """
         <div style="
-        background: #222;
+        background: #2c2c2c;
         color: #fff;
         border-radius: 16px;
         padding: 10px 0 6px 0;
         margin-bottom: 18px;
-        font-size: 1.8rem;
+        font-size: 1.2rem;
         font-weight: bold;
         text-align: center;
         font-family: 'EB Garamond', 'Times New Roman', Times, serif;
