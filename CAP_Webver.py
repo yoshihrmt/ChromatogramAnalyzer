@@ -234,16 +234,16 @@ if uploaded_files and file_info_list:
         show_peaks = st.checkbox("ピークマーカーを表示", value=True, key="show_peaks_inline")
         show_legend = st.checkbox("凡例を表示", value=True, key="show_legend_inline")
 
-    fig, ax = plt.subplots(figsize=(9, 4))
-    handles = []
-
-    for idx, info in enumerate(file_info_list):
-        data = info["data"]
-        time = info["time"]
-        peaks = info["peaks"]
-        color = info["color"]
-        marker = info["marker"]
-        legend = info["legend"]
+        fig, ax = plt.subplots(figsize=(9, 4))
+        handles = []
+    
+        for idx, info in enumerate(file_info_list):
+            data = info["data"]
+            time = info["time"]
+            peaks = info["peaks"]
+            color = info["color"]
+            marker = info["marker"]
+            legend = info["legend"]
 
         ax.plot(time, data, label=legend, color=color)
         if show_peaks and len(peaks) > 0:
