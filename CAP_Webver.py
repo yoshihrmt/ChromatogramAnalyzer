@@ -75,6 +75,7 @@ st.markdown(
         font-size: 1.8rem;
         font-weight: bold;
         text-align: center;
+        font-family: "EB Garamond"
         ">
         Chromatogram Analyzer
     </div>
