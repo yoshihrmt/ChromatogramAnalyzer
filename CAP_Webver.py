@@ -82,7 +82,7 @@ Chromatogram Analyzer
 unsafe_allow_html=True
 )
 
-# ------- サイドバー: ピーク検出パラメータなど
+# --- サイドバーでパラメータを必ず定義 ---
 with st.sidebar:
     st.markdown(
         """
@@ -105,7 +105,7 @@ with st.sidebar:
     peak_height = st.number_input("高さしきい値 (height, mV)", min_value=0.0, max_value=1000.0, value=10.0, step=0.1)
     peak_prominence = st.number_input("突出度 (prominence)", min_value=0.0, max_value=100.0, value=0.5, step=0.1)
 
-# ------- ファイルアップロード
+# --- ファイルアップロード ---
 uploaded_files = st.file_uploader(
     "Excelファイルを複数選択してください",
     type=["xlsx", "xls"],
@@ -132,7 +132,7 @@ if uploaded_files:
             df = process_chromatogram_data(df)
             data = df['height(mV)'].values
             time = df['time(min)'].values
-            # === ピーク検出パラメータをここで使う ===
+            # ここでサイドバーで取得したパラメータを使う
             peaks, _ = find_peaks(
                 data,
                 height=peak_height,
