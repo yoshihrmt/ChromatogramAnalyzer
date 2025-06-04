@@ -188,7 +188,8 @@ if uploaded_files and file_info_list:
     )
 
     if show_legend:
-        font_legend_prop = FontProperties(fname=getattr(font_prop, 'fname', None) or '', size=font_legend) if hasattr(font_prop, 'fname') else FontProperties(family='serif', size=font_legend)
+        # ここで必ずfnameでEB Garamond指定
+        font_legend_prop = FontProperties(fname=font_path, size=font_legend)
         ax.legend(handles=handles, prop=font_legend_prop)
     # 目盛もすべて
     for label in ax.get_xticklabels() + ax.get_yticklabels():
