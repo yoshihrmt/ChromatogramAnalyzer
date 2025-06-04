@@ -11,22 +11,33 @@ import urllib.request
 import os
 import traceback
 
-FONT_URL = "<https://github.com/google/fonts/raw/main/ofl/ebgaramond/EBGaramond-Regular.ttf>"
-FONT_PATH = "EBGaramond-Regular.ttf"
-try:
-    if not os.path.exists(FONT_PATH):
-        urllib.request.urlretrieve(FONT_URL, FONT_PATH)
-    font_prop = FontProperties(fname=FONT_PATH)
-    plt.rcParams['font.family'] = 'EB Garamond'
-except Exception as e:
-    st.warning("カスタムフォントのダウンロードに失敗したため、標準のserifフォントで描画します。")
-    font_prop = FontProperties(family='serif')
-    plt.rcParams['font.family'] = 'serif'
+def get_font():
+    FONT_URL = "<https://github.com/google/fonts/raw/main/ofl/ebgaramond/EBGaramond-Regular.ttf>"
+    FONT_PATH = "EBGaramond-Regular.ttf"
+    try:
+        if not os.path.exists(FONT_PATH):
+            urllib.request.urlretrieve(FONT_URL, FONT_PATH)
+        if os.path.exists(FONT_PATH):
+            st.info("EB Garamondフォントを使用します。")
+            font_prop = FontProperties(fname=FONT_PATH)
+            plt.rcParams['font.family'] = 'EB Garamond'
+            return font_prop
+        else:
+            raise FileNotFoundError(f"{FONT_PATH} が存在しません")
+    except Exception as e:
+        st.warning("カスタムフォントのダウンロードまたは参照に失敗したため、標準serifフォントで描画します。")
+        font_prop = FontProperties(family='serif')
+        plt.rcParams['font.family'] = 'serif'
+        return font_prop
 
+font_prop = get_font()
+plt.rcParams['mathtext.fontset'] = 'cm'
+
+# Streamlit全体CSSでserif化（ただしブラウザに依存）
 st.markdown("""
 <style>
 html, body, [class*="css"]  {
-font-family: "Times New Roman", Times, serif !important;
+font-family: "EB Garamond", "Times New Roman", Times, serif !important;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -117,6 +128,25 @@ if uploaded_files:
                 st.write(traceback.format_exc())
 
 if uploaded_files and file_info_list:
+    with st.sidebar:
+        st.header("グラフ詳細設定")
+        xaxis_auto = st.checkbox("x軸を自動", value=True, key="xaxis_auto")
+        yaxis_auto = st.checkbox("y軸を自動", value=True, key="yaxis_auto")
+        x_min = st.number_input("x軸最小(分)", value=0.0, disabled=xaxis_auto, key="x_min")
+        x_max = st.number_input("x軸最大(分)", value=float(np.max(xmax_total)) if xmax_total else 10.0, disabled=xaxis_auto, key="x_max")
+        y_min = st.number_input("y軸最小(mV)", value=-10.0, disabled=yaxis_auto, key="y_min")
+        y_max = st.number_input("y軸最大(mV)", value=float(np.max(ymax_total))*1.1 if ymax_total else 200.0, disabled=yaxis_auto, key="y_max")
+        show_scalebar = st.checkbox("スケールバーを表示", value=True, key="show_scalebar")
+        scale_value = st.number_input("スケールバー値(mV)", value=50, key="scale_value")
+        scale_x_pos = st.slider("スケールバー x位置（0=左, 1=右）", 0.0, 1.0, 0.7, 0.01, key="scale_x_pos")
+        scale_y_pos = st.slider("スケールバー y位置（0=下, 1=上）", 0.0, 1.0, 0.15, 0.01, key="scale_y_pos")
+        font_xlabel = st.slider("x軸ラベルフォント", 6, 30, 14, key="font_xlabel")
+        font_ylabel = st.slider("y軸ラベルフォント", 6, 30, 14, key="font_ylabel")
+        font_legend = st.slider("凡例フォント", 6, 24, 10, key="font_legend")
+        font_tick = st.slider("目盛フォント", 6, 20, 10, key="font_tick")
+        show_peaks = st.checkbox("ピークマーカーを表示（全データ）", True, key="show_peaks")
+        show_legend = st.checkbox("凡例を表示", True, key="show_legend")
+
     fig, ax = plt.subplots(figsize=(9, 4))
     handles = []  # 凡例用Line2Dオブジェクト
 
@@ -129,7 +159,7 @@ if uploaded_files and file_info_list:
         legend = info["legend"]
 
         ax.plot(time, data, label=legend, color=color)
-        if st.session_state.get('show_peaks', True) and len(peaks) > 0:
+        if show_peaks and len(peaks) > 0:
             ax.plot(
                 time[peaks], data[peaks], marker,
                 linestyle="None", markersize=6,
@@ -142,50 +172,19 @@ if uploaded_files and file_info_list:
                                         label=legend)
         handles.append(legend_line)
 
-    # 軸範囲
-    if 'xmin_total' in locals() and xmin_total and xmax_total:
-        auto_xmin = 0
-        auto_xmax = float(np.max(xmax_total))
-    if 'ymin_total' in locals() and ymin_total and ymax_total:
-        auto_ymin = -10
-        auto_ymax = float(np.max(ymax_total)) * 1.1
-    else:
-        auto_ymin, auto_ymax = 0.0, 200.0
-    with st.sidebar:
-        st.header("グラフ詳細設定")
-        xaxis_auto = st.checkbox("x軸を自動", value=True, key="xaxis_auto")
-        yaxis_auto = st.checkbox("y軸を自動", value=True, key="yaxis_auto")
-        x_min = st.number_input("x軸最小(分)", value=0.0, disabled=xaxis_auto, key="x_min")
-        x_max = st.number_input("x軸最大(分)", value=auto_xmax, disabled=xaxis_auto, key="x_max")
-        y_min = st.number_input("y軸最小(mV)", value=-10.0, disabled=yaxis_auto, key="y_min")
-        y_max = st.number_input("y軸最大(mV)", value=auto_ymax, disabled=yaxis_auto, key="y_max")
-        show_scalebar = st.checkbox("スケールバーを表示", value=True, key="show_scalebar")
-        scale_value = st.number_input("スケールバー値(mV)", value=50, key="scale_value")
-        scale_x_pos = st.slider("スケールバー x位置（0=左, 1=右）", 0.0, 1.0, 0.7, 0.01, key="scale_x_pos")
-        scale_y_pos = st.slider("スケールバー y位置（0=下, 1=上）", 0.0, 1.0, 0.15, 0.01, key="scale_y_pos")
-        font_xlabel = st.slider("x軸ラベルフォント", 6, 30, 14, key="font_xlabel")
-        font_ylabel = st.slider("y軸ラベルフォント", 6, 30, 14, key="font_ylabel")
-        font_legend = st.slider("凡例フォント", 6, 24, 10, key="font_legend")
-        font_tick = st.slider("目盛フォント", 6, 20, 10, key="font_tick")
-        show_peaks = st.checkbox("ピークマーカーを表示（全データ）", True, key="show_peaks")
-        show_legend = st.checkbox("凡例を表示", True, key="show_legend")
-
-    # 軸範囲
     if not xaxis_auto:
         ax.set_xlim(x_min, x_max)
-    elif 'xmin_total' in locals() and 'xmax_total' in locals() and xmin_total and xmax_total:
+    elif xmin_total and xmax_total:
         ax.set_xlim(min(xmin_total), max(xmax_total))
     if not yaxis_auto:
         ax.set_ylim(y_min, y_max)
-    elif 'ymin_total' in locals() and 'ymax_total' in locals() and ymin_total and ymax_total:
+    elif ymin_total and ymax_total:
         ax.set_ylim(min(ymin_total), max(ymax_total) * 1.1)
 
-    # 枠・y軸メモリ消し
     for spine in ["top", "right", "left"]:
         ax.spines[spine].set_visible(False)
     ax.set_yticks([])
 
-    # ラベル・装飾
     ax.set_xlabel("Time /min", fontsize=font_xlabel, fontproperties=font_prop)
     ax.set_ylabel("Absorbance /-", fontsize=font_ylabel, fontproperties=font_prop)
     ylim = ax.get_ylim()
@@ -200,7 +199,7 @@ if uploaded_files and file_info_list:
     )
 
     if show_legend:
-        font_legend_prop = FontProperties(fname=FONT_PATH, size=font_legend)
+        font_legend_prop = FontProperties(fname=getattr(font_prop, 'fname', None) or '', size=font_legend) if hasattr(font_prop, 'fname') else FontProperties(family='serif', size=font_legend)
         ax.legend(handles=handles, prop=font_legend_prop)
     for label in ax.get_xticklabels() + ax.get_yticklabels():
         label.set_fontproperties(font_prop)
@@ -221,7 +220,6 @@ if uploaded_files and file_info_list:
 
     st.pyplot(fig)
 
-    # グラフ保存用バッファとダウンロードボタン
     buf = io.BytesIO()
     fig.savefig(buf, format="png", bbox_inches="tight")
     buf.seek(0)
