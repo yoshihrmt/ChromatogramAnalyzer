@@ -150,46 +150,46 @@ if uploaded_files:
     handles = []  # 凡例用Line2Dオブジェクト
 
     for idx, info in enumerate(file_info_list):
+       legends = []
+    xmin_total, xmax_total, ymin_total, ymax_total = [], [], [], []
+    for i, uploaded_file in enumerate(uploaded_files):
+        legend_label = st.text_input(
+            f"{uploaded_file.name} の凡例名",
+            value=uploaded_file.name,
+            key=uploaded_file.name
+        )
+        legends.append(legend_label)
+
+    for idx, uploaded_file in enumerate(uploaded_files):
         try:
             df = pd.read_excel(uploaded_file, sheet_name='RAW DATA')
             df = process_chromatogram_data(df)
             data = df['height(mV)'].values
             time = df['time(min)'].values
-            # ここでサイドバーのパラメータを使う
             peaks, _ = find_peaks(
                 data,
                 height=peak_height,
                 prominence=peak_prominence,
                 width=peak_width
             )
-        data = info["data"]
-        time = info["time"]
-        peaks = info["peaks"]
-        color = info["color"]
-        marker = info["marker"]
-        legend = info["legend"]
+            color = colors[idx % len(colors)]
+            marker = markers[idx % len(markers)]
 
-        # 波形
-        ax.plot(time, data, label=legend, color=color)
-        # ピークマーカー
-        if show_peaks and len(peaks) > 0:
-            ax.plot(
-                time[peaks], data[peaks], marker,
-                linestyle="None", markersize=6,
-                markerfacecolor=color, markeredgecolor=color, label=None
-            )
-            legend_line = mlines.Line2D(
-                [], [], color=color, marker=marker, linestyle='-',
-                label=legend, markersize=6,
-                markerfacecolor=color, markeredgecolor=color
-            )
-        else:
-            legend_line = mlines.Line2D(
-                [], [], color=color, marker=None, linestyle='-',
-                label=legend
-            )
-        handles.append(legend_line)
-
+            file_info_list.append({
+                "name": uploaded_file.name,
+                "legend": legends[idx],
+                "peaks": peaks,
+                "time": time,
+                "data": data,
+                "color": color,
+                "marker": marker,
+            })
+            xmin_total.append(np.min(time))
+            xmax_total.append(np.max(time))
+            ymin_total.append(np.min(data))
+            ymax_total.append(np.max(data))
+        except Exception as e:
+            st.error(f"{uploaded_file.name}: エラー発生({e})")
     # 軸範囲
     if not xaxis_auto:
         ax.set_xlim(x_min, x_max)
