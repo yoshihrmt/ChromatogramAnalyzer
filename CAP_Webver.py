@@ -76,6 +76,7 @@ with st.sidebar:
     peak_height = st.number_input("最低ピーク高さ（mV）", value=10.0, min_value=0.0, step=1.0)
     peak_prominence = st.number_input("ピークの顕著さ（prominence）", value=0.5, min_value=0.0, step=0.1)
     peak_width = st.number_input("ピークの最低幅（width）", value=10, min_value=1, step=1)
+    st.header("フォントサイズ")
     font_xlabel = st.slider("x軸ラベルフォント", 6, 30, 14)
     font_ylabel = st.slider("y軸ラベルフォント", 6, 30, 14)
     font_legend = st.slider("凡例フォント", 6, 24, 10)
