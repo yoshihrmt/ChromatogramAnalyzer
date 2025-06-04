@@ -62,16 +62,22 @@ st.title("Chromatogram Analyzer")
 # ================== サイドバー ================== #
 with st.sidebar:
     st.markdown(
-    """
-    <h2 style="
-        background: #f5f5f5;
-        text-align:center;
-        margin-bottom:0;
-        ">
-        グラフ詳細設定
-    </h2>
-    """,
-    unsafe_allow_html=True
+        """
+        <div style="
+            background: #222;           /* 濃いグレー（黒寄り） */
+            color: #fff;                /* 文字色は白 */
+            border-radius: 16px;        /* 丸みのある角 */
+            padding: 10px 0 6px 0;
+            margin-bottom: 18px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            text-align: center;
+            border: 2px solid #444;     /* 少し濃いボーダー（任意） */
+            ">
+            グラフ詳細設定
+        </div>
+        """,
+        unsafe_allow_html=True
     )
     xaxis_auto = st.checkbox("x軸を自動", value=True)
     yaxis_auto = st.checkbox("y軸を自動", value=True)
@@ -85,13 +91,19 @@ with st.sidebar:
     scale_y_pos = st.slider("スケールバー y位置（0=下, 1=上）", 0.0, 1.0, 0.15, 0.01)
     st.markdown(
     """
-    <h2 style="
-        background: #f5f5f5;
-        text-align:center;
-        margin-bottom:0;
+    <div style="
+        background: #222;
+        color: #fff;
+        border-radius: 16px;
+        padding: 10px 0 6px 0;
+        margin-bottom: 18px;
+        font-size: 1.3rem;
+        font-weight: bold;
+        text-align: center;
+        border: 2px solid #444;
         ">
         ピーク検出パラメータ
-    </h2>
+    </div>
     """,
     unsafe_allow_html=True
     )
@@ -100,13 +112,19 @@ with st.sidebar:
     peak_width = st.number_input("ピークの最低幅（width）", value=10, min_value=1, step=1)
     st.markdown(
     """
-    <h2 style="
-        background: #f5f5f5;
-        text-align:center;
-        margin-bottom:0;
+    <div style="
+        background: #222;
+        color: #fff;
+        border-radius: 16px;
+        padding: 10px 0 6px 0;
+        margin-bottom: 18px;
+        font-size: 1.3rem;
+        font-weight: bold;
+        text-align: center;
+        border: 2px solid #444;
         ">
         フォントサイズ
-    </h2>
+    </div>
     """,
     unsafe_allow_html=True
     )
