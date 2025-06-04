@@ -134,17 +134,70 @@ if uploaded_files:
 
 if uploaded_files and file_info_list:
     with st.sidebar:
-        st.header("グラフ詳細設定")
+        st.markdown(
+        """
+        <div style="
+        background: #222;
+        color: #fff;
+        border-radius: 16px;
+        padding: 10px 0 6px 0;
+        margin-bottom: 18px;
+        font-size: 1.8rem;
+        font-weight: bold;
+        text-align: center;
+        font-family: 'EB Garamond', 'Times New Roman', Times, serif;
+        ">
+        グラフ詳細
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
         xaxis_auto = st.checkbox("x軸を自動", value=True, key="xaxis_auto")
         yaxis_auto = st.checkbox("y軸を自動", value=True, key="yaxis_auto")
         x_min = st.number_input("x軸最小(分)", value=0.0, disabled=xaxis_auto, key="x_min")
         x_max = st.number_input("x軸最大(分)", value=float(np.max(xmax_total)) if xmax_total else 10.0, disabled=xaxis_auto, key="x_max")
         y_min = st.number_input("y軸最小(mV)", value=-10.0, disabled=yaxis_auto, key="y_min")
         y_max = st.number_input("y軸最大(mV)", value=float(np.max(ymax_total))*1.1 if ymax_total else 200.0, disabled=yaxis_auto, key="y_max")
+        st.markdown(
+        """
+        <div style="
+        background: #222;
+        color: #fff;
+        border-radius: 16px;
+        padding: 10px 0 6px 0;
+        margin-bottom: 18px;
+        font-size: 1.8rem;
+        font-weight: bold;
+        text-align: center;
+        font-family: 'EB Garamond', 'Times New Roman', Times, serif;
+        ">
+        スケールバー
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
         show_scalebar = st.checkbox("スケールバーを表示", value=True, key="show_scalebar")
         scale_value = st.number_input("スケールバー値(mV)", value=50, key="scale_value")
         scale_x_pos = st.slider("スケールバー x位置（0=左, 1=右）", 0.0, 1.0, 0.7, 0.1, key="scale_x_pos")
         scale_y_pos = st.slider("スケールバー y位置（0=下, 1=上）", 0.0, 1.0, 0.15, 0.1, key="scale_y_pos")
+        st.markdown(
+        """
+        <div style="
+        background: #222;
+        color: #fff;
+        border-radius: 16px;
+        padding: 10px 0 6px 0;
+        margin-bottom: 18px;
+        font-size: 1.8rem;
+        font-weight: bold;
+        text-align: center;
+        font-family: 'EB Garamond', 'Times New Roman', Times, serif;
+        ">
+        フォントサイズ
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
         font_xlabel = st.slider("x軸ラベルフォント", 10, 30, 19, key="font_xlabel")
         font_ylabel = st.slider("y軸ラベルフォント", 10, 30, 19, key="font_ylabel")
         font_legend = st.slider("凡例フォント", 5, 22, 13, key="font_legend")
