@@ -12,20 +12,12 @@ import io
 
 st.markdown("""
 <style>
-/* 可能なかぎり多くのlabelにserifを適用 */
-div[role="checkbox"] > label,
-div[role="slider"] > label,
-section[tabindex="0"] label,
-label,
-.css-16huue1, .css-1fv8s86, .css-1cpxqw2 {
-    font-family: 'Times New Roman', Times, serif !important;
-}
-/* Streamlit UI全体にも一応適用 */
 html, body, [class*="css"] {
-    font-family: 'Times New Roman', Times, serif !important;
+    font-family: 'MS Gothic', 'ＭＳ ゴシック', 'Yu Gothic', 'Meiryo', monospace, sans-serif !important;
 }
 </style>
 """, unsafe_allow_html=True)
+
 
 colors = [
     'navy', 'crimson', 'forestgreen', 'darkorange', 'purple', 'teal', 'maroon',
