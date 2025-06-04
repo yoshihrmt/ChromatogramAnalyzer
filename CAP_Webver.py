@@ -318,7 +318,7 @@ if uploaded_files and file_info_list:
     fig.savefig(buf, format="png", bbox_inches="tight")
     buf.seek(0)
     st.download_button(
-        label="グラフをpngで保存",
+        label="グラフをPNGで保存",
         data=buf,
         file_name="chromatogram.png",
         mime="application/png"
