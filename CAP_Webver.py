@@ -8,11 +8,9 @@ from scipy.signal import find_peaks
 from scipy.integrate import simpson
 import io
 
-# グローバルなmatplotlibフォント設定
 plt.rcParams['font.family'] = 'serif'
 plt.rcParams['font.serif'] = ['Times New Roman', 'Times', 'serif']
-plt.rcParams['mathtext.fontset'] = 'cm'              # 数式もserif系に
-plt.rcParams['axes.unicode_minus'] = False           # マイナス記号正規化
+plt.rcParams['mathtext.fontset'] = 'cm'
 
 # Streamlit全体CSSでserif化（ページ内UIなどに影響）
 st.markdown("""
@@ -204,13 +202,13 @@ if uploaded_files:
 
     # カスタム凡例（ここをFontPropertiesで修正!）
     if show_legend:
-        font_legend_prop = FontProperties(
-            family='serif',
-            serif=['Times New Roman', 'Times', 'serif'],
-            size=font_legend
-        )
+        font_legend_prop = FontProperties(family='serif', size=font_legend)
         ax.legend(handles=handles, prop=font_legend_prop)
-    ax.tick_params(axis='both', labelsize=font_tick)
+    
+    for label in ax.get_xticklabels() + ax.get_yticklabels():
+        label.set_fontname('Times New Roman')
+    ax.set_xlabel("Time /min", fontsize=font_xlabel, fontname='Times New Roman')
+    ax.set_ylabel("Absorbance /-", fontsize=font_ylabel, fontname='Times New Roman')
     # 目盛ラベルもserif系に
     for label in ax.get_xticklabels() + ax.get_yticklabels():
         label.set_fontname('Times New Roman')
