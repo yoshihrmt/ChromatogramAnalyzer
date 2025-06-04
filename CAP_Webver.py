@@ -14,7 +14,7 @@ st.markdown("""
 <style>
 .stTextInput label, .stNumberInput label, .stCheckbox label,
 .stSlider label, label, .st-cw .st-bv .st-cu {
-    font-family: 'Times New Roman', Times, serif !important;
+    font-family: serif !important;
     font-size: 1.1rem !important;
 }
 </style>
