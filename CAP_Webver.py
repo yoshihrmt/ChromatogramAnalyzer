@@ -200,7 +200,7 @@ if uploaded_files and file_info_list:
         '', xy=(x_pos, y_start), xytext=(x_pos, y_start + scale_value),
         arrowprops=dict(arrowstyle='<->', linewidth=1)
     )
-    st.write("スケールバー値font_scale_value:", font_scale_value)  # デバッグ用
+    
     ax.text(
         x_pos + (current_xlim[1] - current_xlim[0]) * 0.01,
         y_start + scale_value / 2,
@@ -224,7 +224,7 @@ if uploaded_files and file_info_list:
         file_name="chromatogram.png",
         mime="application/png"
     )
-
+    st.write("スケールバー値font_scale_value:", font_scale_value)  # デバッグ用
     st.markdown("### 解析結果")
     for info in file_info_list:
         st.write(f"{info['legend']} … 検出されたピーク数: {len(info['peaks'])}")
