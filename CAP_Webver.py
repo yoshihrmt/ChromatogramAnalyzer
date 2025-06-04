@@ -12,14 +12,14 @@ import io
 
 st.markdown("""
 <style>
-html, body, [class*="css"], .stTextInput label, .stFileUploader label,
-.stSlider, .stNumberInput label, .stCheckbox label,
-span[data-baseweb="input"] label,
-div[role="slider"], label {
+.stTextInput label, .stNumberInput label, .stCheckbox label,
+.stSlider label, label, .st-cw .st-bv .st-cu {
     font-family: 'Times New Roman', Times, serif !important;
+    font-size: 1.1rem !important;
 }
 </style>
 """, unsafe_allow_html=True)
+
 
 
 colors = [
