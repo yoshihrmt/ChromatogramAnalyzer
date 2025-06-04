@@ -233,13 +233,13 @@ if uploaded_files:
 
     # グラフ保存用バッファとダウンロードボタン
     buf = io.BytesIO()
-    fig.savefig(buf, format="pdf", bbox_inches="tight")
+    fig.savefig(buf, format="png", bbox_inches="tight")
     buf.seek(0)
     st.download_button(
-        label="グラフをPDFで保存",
+        label="グラフをpngで保存",
         data=buf,
-        file_name="chromatogram.pdf",
-        mime="application/pdf"
+        file_name="chromatogram.png",
+        mime="application/png"
     )
 
     # 解析結果表示
