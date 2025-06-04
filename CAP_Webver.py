@@ -10,17 +10,6 @@ from scipy.integrate import simpson
 import io
 import traceback
 
-st.write("Current working dir:", os.getcwd())
-st.write("Font exists?:", os.path.exists("fonts/EBGaramond-Regular.ttf"))
-
-font_path = "fonts/EBGaramond-Regular.ttf"
-if not os.path.exists(font_path):
-    st.warning("フォントファイルが見つからないため標準serifフォントで表示します。")
-    font_prop = FontProperties(family='serif')
-else:
-    st.info("EB Garamond（ローカルファイル）を使用します。")
-    font_prop = FontProperties(fname=font_path)
-
 plt.rcParams['mathtext.fontset'] = 'cm'
 
 # Streamlit全体CSSでserif化（ブラウザ依存）
