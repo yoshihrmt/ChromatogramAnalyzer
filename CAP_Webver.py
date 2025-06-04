@@ -24,7 +24,7 @@ plt.rcParams['mathtext.fontset'] = 'cm'
 st.markdown("""
 <style>
 html, body, [class*="css"]  {
-font-family: "EB Garamond", "Times New Roman", Times, serif !important;
+    font-family: "EB Garamond", "Times New Roman", Times, serif !important;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -131,13 +131,10 @@ if uploaded_files and file_info_list:
         font_ylabel = st.slider("y軸ラベルフォント", 10, 32, 21, key="font_ylabel")
         font_legend = st.slider("凡例フォント", 5, 21, 13, key="font_legend")
         font_tick = st.slider("目盛フォント", 5, 25, 15, key="font_tick")
-        # サイドバー用
 
-    # メインエリア：グラフより前で状態を取得！
     show_peaks = st.checkbox("ピークマーカーを表示（全データ）", value=True, key="show_peaks_inline")
     show_legend = st.checkbox("凡例を表示", value=True, key="show_legend_inline")
 
-    # グラフ生成
     fig, ax = plt.subplots(figsize=(9, 4))
     handles = []
 
@@ -178,9 +175,12 @@ if uploaded_files and file_info_list:
 
     ax.set_xlabel("Time /min", fontsize=font_xlabel, fontproperties=font_prop)
     ax.set_ylabel("Absorbance /-", fontsize=font_ylabel, fontproperties=font_prop)
+
+    # ここが追加ポイント
+    ax.tick_params(axis='both', which='major', labelsize=font_tick)
     for label in ax.get_xticklabels() + ax.get_yticklabels():
         label.set_fontproperties(font_prop)
-        label.set_fontsize(font_tick)
+
     ylim = ax.get_ylim()
     xlim = ax.get_xlim()
     arrow_x = xlim[0]
@@ -195,8 +195,7 @@ if uploaded_files and file_info_list:
     if show_legend:
         font_legend_prop = FontProperties(fname=font_path, size=font_legend)
         ax.legend(handles=handles, prop=font_legend_prop)
-    for label in ax.get_xticklabels() + ax.get_yticklabels():
-        label.set_fontproperties(font_prop)
+
     if show_scalebar:
         current_xlim = ax.get_xlim()
         current_ylim = ax.get_ylim()
