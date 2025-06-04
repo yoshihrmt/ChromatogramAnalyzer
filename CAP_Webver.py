@@ -13,15 +13,23 @@ import traceback
 
 def get_font():
     FONT_URL = "<https://github.com/google/fonts/raw/main/ofl/ebgaramond/EBGaramond-Regular.ttf>"
-    FONT_PATH = "fonts/EBGaramond-Regular.ttf"  # 自前でアップロードした絶対or相対パス
-if os.path.exists(FONT_PATH):
-    st.info("EB Garamond（ローカルファイル）を使用します。")
-    font_prop = FontProperties(fname=FONT_PATH)
-    plt.rcParams['font.family'] = 'EB Garamond'
-else:
-    st.warning("フォントファイルが見つからなかったため、標準serifフォントで描画します。")
-    font_prop = FontProperties(family='serif')
-    plt.rcParams['font.family'] = 'serif'
+    FONT_PATH = "EBGaramond-Regular.ttf"
+    try:
+        # すでにある場合はダウンロードしない
+        if not os.path.exists(FONT_PATH):
+            urllib.request.urlretrieve(FONT_URL, FONT_PATH)
+        if os.path.exists(FONT_PATH):
+            st.info("EB Garamondフォントを使用します。")
+            font_prop = FontProperties(fname=FONT_PATH)
+            plt.rcParams['font.family'] = 'EB Garamond'
+            return font_prop
+        else:
+            raise FileNotFoundError(f"{FONT_PATH} が存在しません")
+    except Exception as e:
+        st.warning("カスタムフォントのダウンロードまたは参照に失敗したため、標準serifフォントで描画します。")
+        font_prop = FontProperties(family='serif')
+        plt.rcParams['font.family'] = 'serif'
+        return font_prop
 
 font_prop = get_font()
 plt.rcParams['mathtext.fontset'] = 'cm'
