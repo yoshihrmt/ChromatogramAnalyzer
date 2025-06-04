@@ -61,7 +61,10 @@ st.title("Chromatogram Analyzer")
 
 # ================== サイドバー ================== #
 with st.sidebar:
-    st.header("＝＝＝グラフ詳細設定＝＝＝")
+    st.markdown(
+    '<h2 style="text-align:center; margin-bottom:0;">グラフ詳細設定</h2>',
+    unsafe_allow_html=True
+)
     xaxis_auto = st.checkbox("x軸を自動", value=True)
     yaxis_auto = st.checkbox("y軸を自動", value=True)
     x_min = st.number_input("x軸最小(分)", value=auto_xmin, disabled=xaxis_auto)
