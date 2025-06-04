@@ -64,15 +64,15 @@ with st.sidebar:
     st.markdown(
         """
         <div style="
-            background: #222;           /* 濃いグレー（黒寄り） */
-            color: #fff;                /* 文字色は白 */
-            border-radius: 16px;        /* 丸みのある角 */
+            background: #222;
+            color: #fff;
+            border-radius: 16px;
             padding: 10px 0 6px 0;
             margin-bottom: 18px;
             font-size: 1.3rem;
             font-weight: bold;
             text-align: center;
-            border: 2px solid #444;     /* 少し濃いボーダー（任意） */
+            border: 2px solid #444;
             ">
             グラフ詳細設定
         </div>
