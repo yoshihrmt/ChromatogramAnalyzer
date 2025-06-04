@@ -130,6 +130,7 @@ if uploaded_files and file_info_list:
         font_xlabel = st.slider("x軸ラベルフォント", 10, 30, 19, key="font_xlabel")
         font_ylabel = st.slider("y軸ラベルフォント", 10, 30, 19, key="font_ylabel")
         font_legend = st.slider("凡例フォント", 5, 21, 13, key="font_legend")
+        font_tick = st.slider("凡例フォント", 5, 21, 13, key="font_tick")
         font_scale_value = st.slider("スケールバー値フォント", 10, 30, 19, key="font_scale_value")
 
     show_peaks = st.checkbox("ピークマーカーを表示（全データ）", value=True, key="show_peaks_inline")
@@ -175,6 +176,10 @@ if uploaded_files and file_info_list:
 
     ax.set_xlabel("Time /min", fontsize=font_xlabel, fontproperties=font_prop)
     ax.set_ylabel("Absorbance /-", fontsize=font_ylabel, fontproperties=font_prop)
+    for label in ax.get_xticklabels() + ax.get_yticklabels():
+        label.set_fontproperties(font_prop)
+        label.set_fontsize(font_tick)
+
 
     ylim = ax.get_ylim()
     xlim = ax.get_xlim()
@@ -200,8 +205,6 @@ if uploaded_files and file_info_list:
             '', xy=(x_pos, y_start), xytext=(x_pos, y_start + scale_value),
             arrowprops=dict(arrowstyle='<->', linewidth=1)
         )
-        # ここで一度デバッグ表示
-        st.write("font_scale_value:", font_scale_value)
         ax.text(
             x_pos + (current_xlim[1] - current_xlim[0]) * 0.01,
             y_start + scale_value / 2,
