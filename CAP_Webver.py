@@ -72,7 +72,7 @@ with st.sidebar:
     scale_value = st.number_input("スケールバー値(mV)", value=50)
     scale_x_pos = st.slider("スケールバー x位置（0=左, 1=右）", 0.0, 1.0, 0.7, 0.01)
     scale_y_pos = st.slider("スケールバー y位置（0=下, 1=上）", 0.0, 1.0, 0.15, 0.01)
-    st.header("＝＝＝ピーク検出パラメータ＝＝＝")
+    st.header("＝＝ピーク検出パラメータ＝＝")
     peak_height = st.number_input("最低ピーク高さ（mV）", value=10.0, min_value=0.0, step=1.0)
     peak_prominence = st.number_input("ピークの顕著さ（prominence）", value=0.5, min_value=0.0, step=0.1)
     peak_width = st.number_input("ピークの最低幅（width）", value=10, min_value=1, step=1)
