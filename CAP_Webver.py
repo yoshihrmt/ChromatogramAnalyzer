@@ -109,7 +109,12 @@ if uploaded_files:
             df = process_chromatogram_data(df)
             data = df['height(mV)'].values
             time = df['time(min)'].values
-            peaks, _ = find_peaks(data, height=10.0, prominence=0.5, width=10)
+            peaks, _ = find_peaks(
+                data,
+                height=peak_height,
+                prominence=peak_prominence,
+                width=peak_width,
+            )
             color = colors[idx % len(colors)]
             marker = markers[idx % len(markers)]
 
@@ -175,6 +180,26 @@ if uploaded_files and file_info_list:
         """,
         unsafe_allow_html=True
     )
+            st.markdown(
+            """
+            <div style="
+            background: #2c2c2c;
+            color: #fff;
+            border-radius: 16px;
+            padding: 10px 0 6px 0;
+            margin-bottom: 18px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-align: center;
+            font-family: 'EB Garamond', 'Times New Roman', Times, serif;
+            ">
+            ピーク検出パラメータ
+            </div>
+            """, unsafe_allow_html=True
+        )
+        peak_width = st.slider("ピーク幅 (width)", min_value=1, max_value=100, value=10, step=1)
+        peak_height = st.number_input("高さしきい値 (height, mV)", min_value=0.0, max_value=1000.0, value=10.0, step=0.1)
+        peak_prominence = st.number_input("突出度 (prominence)", min_value=0.0, max_value=100.0, value=0.5, step=0.1)
         show_scalebar = st.checkbox("スケールバーを表示", value=True, key="show_scalebar")
         scale_value = st.number_input("スケールバー値(mV)", value=50, key="scale_value")
         scale_x_pos = st.slider("スケールバー x位置（0=左, 1=右）", 0.0, 1.0, 0.7, 0.1, key="scale_x_pos")
@@ -203,7 +228,7 @@ if uploaded_files and file_info_list:
         font_tick = st.slider("x軸値フォント", 5, 18, 11, key="font_tick")
         font_scale_value = st.slider("スケールバー値フォント", 10, 26, 17, key="font_scale_value")
 
-    show_peaks = st.checkbox("ピークマーカーを表示（全データ）", value=True, key="show_peaks_inline")
+    show_peaks = st.checkbox("ピークマーカーを表示", value=True, key="show_peaks_inline")
     show_legend = st.checkbox("凡例を表示", value=True, key="show_legend_inline")
 
     fig, ax = plt.subplots(figsize=(9, 4))
