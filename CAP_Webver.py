@@ -200,14 +200,16 @@ if uploaded_files and file_info_list:
         '', xy=(x_pos, y_start), xytext=(x_pos, y_start + scale_value),
         arrowprops=dict(arrowstyle='<->', linewidth=1)
     )
+    st.write("スケールバー値font_scale_value:", font_scale_value)  # デバッグ用
     ax.text(
         x_pos + (current_xlim[1] - current_xlim[0]) * 0.01,
         y_start + scale_value / 2,
         f"{scale_value} mV",
         va='center', ha='left',
-        fontsize=font_scale_value, 
+        fontsize=font_scale_value,
         fontproperties=font_prop
     )
+
 
 
     st.pyplot(fig)
