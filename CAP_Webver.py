@@ -30,6 +30,9 @@ markers = [
     'o', 's', '^', 'v', 'd', 'x', '+', '<', '>', '*', 'p', 'h', 'H', 'D', '|', '_', '8'
 ]
 
+# 軸初期値
+auto_xmin, auto_xmax, auto_ymin, auto_ymax = 0.0, 10.0, 0.0, 200.0
+
 def process_chromatogram_data(df):
     df['height(mV)'] = df['height(uV)'].replace([np.inf, -np.inf], np.nan).fillna(0) / 1000
     df['time(min)'] = df['time(sec)'].replace([np.inf, -np.inf], np.nan).fillna(0) / 60
@@ -55,9 +58,6 @@ def calculate_peak_parameters(data, time, peak_index):
     return symmetry, W_0_05h, f
 
 st.title("Chromatogram Analyzer")
-
-# 軸初期値
-auto_xmin, auto_xmax, auto_ymin, auto_ymax = 0.0, 10.0, 0.0, 200.0
 
 # ================== サイドバー ================== #
 with st.sidebar:
