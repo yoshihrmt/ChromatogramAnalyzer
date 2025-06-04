@@ -265,8 +265,8 @@ if uploaded_files and file_info_list:
     ax.set_yticks([])
 
     # ラベル
-    ax.set_xlabel("Time /min", fontsize=font_xlabel)
-    ax.set_ylabel("Absorbance /-", fontsize=font_ylabel)
+    ax.set_xlabel("Time /min", fontsize=font_xlabel, fontname='Yu Mincho')
+    ax.set_ylabel("Absorbance /-", fontsize=font_ylabel, fontname='Yu Mincho')
 
     # y軸の上向き矢印
     ylim = ax.get_ylim()
@@ -282,7 +282,7 @@ if uploaded_files and file_info_list:
 
     # カスタム凡例
     if show_legend:
-        ax.legend(handles=handles, fontsize=font_legend)
+        ax.legend(handles=handles, fontsize=font_legend, fontname='Yu Mincho')
     ax.tick_params(axis='both', labelsize=font_tick)
 
     # スケールバー
