@@ -170,9 +170,10 @@ with st.sidebar:
         </div>
         """, unsafe_allow_html=True
     )
-    peak_width = st.slider("ピーク幅 (width)", min_value=1, max_value=100, value=10, step=1)
-    peak_height = st.number_input("高さしきい値 (height, mV)", min_value=0.0, max_value=1000.0, value=10.0, step=0.1)
-    peak_prominence = st.number_input("突出度 (prominence)", min_value=0.0, max_value=100.0, value=0.5, step=0.1)
+    
+peak_width = st.slider("ピーク幅 (width)", min_value=1, max_value=100, value=10, step=1)
+peak_height = st.number_input("高さしきい値 (height, mV)", min_value=0.0, max_value=1000.0, value=10.0, step=0.1)
+peak_prominence = st.number_input("突出度 (prominence)", min_value=0.0, max_value=100.0, value=0.5, step=0.1)
 
 # --- ファイルアップロード ---
 uploaded_files = st.file_uploader(
