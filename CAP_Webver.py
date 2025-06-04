@@ -232,11 +232,8 @@ if uploaded_files:
 if uploaded_files and file_info_list:
 
     # --- ここでチェックボックスをメインカラムで上に設置 ---
-    col1, col2 = st.columns([1,1])
-    with col1:
-        show_peaks = st.checkbox("ピークマーカーを表示", value=True, key="show_peaks_inline")
-    with col2:
-        show_legend = st.checkbox("凡例を表示", value=True, key="show_legend_inline")
+    show_peaks = st.checkbox("ピークマーカーを表示", value=True, key="show_peaks_inline")
+    show_legend = st.checkbox("凡例を表示", value=True, key="show_legend_inline")
 
     fig, ax = plt.subplots(figsize=(9, 4))
     handles = []
