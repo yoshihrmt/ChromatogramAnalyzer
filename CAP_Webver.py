@@ -10,6 +10,7 @@ from scipy.integrate import simpson
 import io
 import traceback
 
+# --- フォントプロパティの用意 ---
 font_path = "fonts/EBGaramond-Regular.ttf"
 if not os.path.exists(font_path):
     st.warning("フォントファイルが見つかりません。serifで表示します。")
@@ -71,7 +72,7 @@ uploaded_files = st.file_uploader(
     accept_multiple_files=True
 )
 
-auto_xmin, auto_xmax, auto_ymin, auto_ymax = 0.0, .0, 0.0, 200.0
+auto_xmin, auto_xmax, auto_ymin, auto_ymax = 0.0, 10.0, 0.0, 200.0
 file_info_list = []
 
 if uploaded_files:
@@ -130,9 +131,13 @@ if uploaded_files and file_info_list:
         font_ylabel = st.slider("y軸ラベルフォント", 10, 32, 21, key="font_ylabel")
         font_legend = st.slider("凡例フォント", 5, 21, 13, key="font_legend")
         font_tick = st.slider("目盛フォント", 5, 25, 15, key="font_tick")
-        show_peaks = st.checkbox("ピークマーカーを表示（全データ）", True, key="show_peaks")
-        show_legend = st.checkbox("凡例を表示", True, key="show_legend")
+        # サイドバー用
 
+    # メインエリア：グラフより前で状態を取得！
+    show_peaks = st.checkbox("ピークマーカーを表示（全データ）", value=True, key="show_peaks_inline")
+    show_legend = st.checkbox("凡例を表示", value=True, key="show_legend_inline")
+
+    # グラフ生成
     fig, ax = plt.subplots(figsize=(9, 4))
     handles = []
 
@@ -171,7 +176,6 @@ if uploaded_files and file_info_list:
         ax.spines[spine].set_visible(False)
     ax.set_yticks([])
 
-    # すべてEB Garamond
     ax.set_xlabel("Time /min", fontsize=font_xlabel, fontproperties=font_prop)
     ax.set_ylabel("Absorbance /-", fontsize=font_ylabel, fontproperties=font_prop)
     ylim = ax.get_ylim()
@@ -186,13 +190,10 @@ if uploaded_files and file_info_list:
     )
 
     if show_legend:
-        # ここで必ずfnameでEB Garamond指定
         font_legend_prop = FontProperties(fname=font_path, size=font_legend)
         ax.legend(handles=handles, prop=font_legend_prop)
-    # 目盛もすべて
     for label in ax.get_xticklabels() + ax.get_yticklabels():
         label.set_fontproperties(font_prop)
-    # スケールバーなど
     if show_scalebar:
         current_xlim = ax.get_xlim()
         current_ylim = ax.get_ylim()
@@ -210,12 +211,10 @@ if uploaded_files and file_info_list:
 
     st.pyplot(fig)
 
-    show_peaks = st.checkbox("ピークマーカーを表示（全データ）", value=True, key="show_peaks_inline")
-    show_legend = st.checkbox("凡例を表示", value=True, key="show_legend_inline")
-    
     buf = io.BytesIO()
     fig.savefig(buf, format="png", bbox_inches="tight")
     buf.seek(0)
+
     st.download_button(
         label="グラフをpngで保存",
         data=buf,
