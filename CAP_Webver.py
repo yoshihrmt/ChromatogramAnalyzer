@@ -1,4 +1,5 @@
 import streamlit as st
+import os
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -7,16 +8,23 @@ from matplotlib.font_manager import FontProperties
 from scipy.signal import find_peaks
 from scipy.integrate import simpson
 import io
-import urllib.request
-import os
 import traceback
 
-font_prop = FontProperties(fname="fonts/EBGaramond-Regular.ttf")
+# パス・存在確認情報を出力
+st.write("Current working dir:", os.getcwd())
+st.write("Font exists?:", os.path.exists("fonts/EBGaramond-Regular.ttf"))
 
-font_prop = get_font()
+font_path = "fonts/EBGaramond-Regular.ttf"
+if not os.path.exists(font_path):
+    st.warning("フォントファイルが見つからないため標準serifフォントで表示します。")
+    font_prop = FontProperties(family='serif')
+else:
+    st.info("EB Garamond（ローカルファイル）を使用します。")
+    font_prop = FontProperties(fname=font_path)
+
 plt.rcParams['mathtext.fontset'] = 'cm'
 
-# Streamlit全体CSSでserif化（ただしブラウザに依存）
+# Streamlit全体CSSでserif化（ブラウザ依存）
 st.markdown("""
 <style>
 html, body, [class*="css"]  {
@@ -131,7 +139,7 @@ if uploaded_files and file_info_list:
         show_legend = st.checkbox("凡例を表示", True, key="show_legend")
 
     fig, ax = plt.subplots(figsize=(9, 4))
-    handles = []  # 凡例用Line2Dオブジェクト
+    handles = []
 
     for idx, info in enumerate(file_info_list):
         data = info["data"]
