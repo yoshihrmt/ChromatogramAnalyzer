@@ -235,6 +235,9 @@ if uploaded_files and file_info_list:
         mime="application/pdf"
     )
 
+    show_peaks = st.checkbox("ピークマーカーを表示（全データ）", True)
+    show_legend = st.checkbox("凡例を表示", True)
+
     # 解析結果表示
     st.markdown("### 解析結果")
     for info in file_info_list:
