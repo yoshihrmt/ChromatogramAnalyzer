@@ -129,7 +129,7 @@ if uploaded_files and file_info_list:
         scale_y_pos = st.slider("スケールバー y位置（0=下, 1=上）", 0.0, 1.0, 0.15, 0.01, key="scale_y_pos")
         font_xlabel = st.slider("x軸ラベルフォント", 10, 32, 21, key="font_xlabel")
         font_ylabel = st.slider("y軸ラベルフォント", 10, 32, 21, key="font_ylabel")
-        font_legend = st.slider("凡例フォント", 5, 25, 15, key="font_legend")
+        font_legend = st.slider("凡例フォント", 5, 21, 13, key="font_legend")
         font_tick = st.slider("目盛フォント", 5, 25, 15, key="font_tick")
         show_peaks = st.checkbox("ピークマーカーを表示（全データ）", True, key="show_peaks")
         show_legend = st.checkbox("凡例を表示", True, key="show_legend")
