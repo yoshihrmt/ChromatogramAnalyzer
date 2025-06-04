@@ -7,9 +7,20 @@ from matplotlib.font_manager import FontProperties
 from scipy.signal import find_peaks
 from scipy.integrate import simpson
 import io
+import urllib.request
+import traceback
+
+# ▼ ここでTimes New Roman互換フォントをダウンロード＆セット
+FONT_URL = "<https://github.com/alq666/wancho/releases/download/v1.100/texgyretermes-regular.otf>"
+FONT_PATH = "texgyretermes-regular.otf"
+try:
+    urllib.request.urlretrieve(FONT_URL, FONT_PATH)
+except Exception as e:
+    st.error(f"フォントのダウンロードに失敗しました: {e}")
+font_prop = FontProperties(fname=FONT_PATH)
 
 plt.rcParams['font.family'] = 'serif'
-plt.rcParams['font.serif'] = ['Times New Roman', 'Times', 'serif']
+plt.rcParams['font.serif'] = ['TeX Gyre Termes', 'Times New Roman', 'Times', 'serif']
 plt.rcParams['mathtext.fontset'] = 'cm'
 
 # Streamlit全体CSSでserif化（ページ内UIなどに影響）
@@ -105,16 +116,18 @@ if uploaded_files:
             ymin_total.append(np.min(data))
             ymax_total.append(np.max(data))
         except Exception as e:
-            st.error(f"{uploaded_file.name}: エラー発生({e})")
+            st.error(f"{uploaded_file.name}: エラー発生 ({e})")
+            with st.expander("エラー詳細を表示"):
+                st.write(traceback.format_exc())
 
-    if xmin_total and xmax_total:
-        auto_xmin = 0
-        auto_xmax = float(np.max(xmax_total))
-    if ymin_total and ymax_total:
-        auto_ymin = -10
-        auto_ymax = float(np.max(ymax_total)) * 1.1
-    else:
-        auto_ymin, auto_ymax = 0.0, 200.0
+if 'xmin_total' in locals() and xmin_total and xmax_total:
+    auto_xmin = 0
+    auto_xmax = float(np.max(xmax_total))
+if 'ymin_total' in locals() and ymin_total and ymax_total:
+    auto_ymin = -10
+    auto_ymax = float(np.max(ymax_total)) * 1.1
+else:
+    auto_ymin, auto_ymax = 0.0, 200.0
 
 # サイドバー
 with st.sidebar:
@@ -136,7 +149,7 @@ with st.sidebar:
     show_peaks = st.checkbox("ピークマーカーを表示（全データ）", True)
     show_legend = st.checkbox("凡例を表示", True)
 
-if uploaded_files:
+if uploaded_files and file_info_list:
     fig, ax = plt.subplots(figsize=(9, 4))
     handles = []  # 凡例用Line2Dオブジェクト
 
@@ -148,7 +161,6 @@ if uploaded_files:
         marker = info["marker"]
         legend = info["legend"]
 
-        # 波形
         ax.plot(time, data, label=legend, color=color)
         # ピークマーカー
         if show_peaks and len(peaks) > 0:
@@ -172,11 +184,11 @@ if uploaded_files:
     # 軸範囲
     if not xaxis_auto:
         ax.set_xlim(x_min, x_max)
-    elif xmin_total and xmax_total:
+    elif 'xmin_total' in locals() and 'xmax_total' in locals() and xmin_total and xmax_total:
         ax.set_xlim(min(xmin_total), max(xmax_total))
     if not yaxis_auto:
         ax.set_ylim(y_min, y_max)
-    elif ymin_total and ymax_total:
+    elif 'ymin_total' in locals() and 'ymax_total' in locals() and ymin_total and ymax_total:
         ax.set_ylim(min(ymin_total), max(ymax_total) * 1.1)
 
     # 枠・y軸メモリ消し
@@ -184,9 +196,9 @@ if uploaded_files:
         ax.spines[spine].set_visible(False)
     ax.set_yticks([])
 
-    # ラベル・装飾 (fontnameでserif系明示)
-    ax.set_xlabel("Time /min", fontsize=font_xlabel, fontname='Times New Roman')
-    ax.set_ylabel("Absorbance /-", fontsize=font_ylabel, fontname='Times New Roman')
+    # ラベル・装飾
+    ax.set_xlabel("Time /min", fontsize=font_xlabel, fontproperties=font_prop)
+    ax.set_ylabel("Absorbance /-", fontsize=font_ylabel, fontproperties=font_prop)
 
     # y軸の上向き矢印
     ylim = ax.get_ylim()
@@ -200,18 +212,14 @@ if uploaded_files:
         clip_on=False
     )
 
-    # カスタム凡例（ここをFontPropertiesで修正!）
+    # カスタム凡例
     if show_legend:
-        font_legend_prop = FontProperties(family='serif', size=font_legend)
+        font_legend_prop = FontProperties(fname=FONT_PATH, size=font_legend)
         ax.legend(handles=handles, prop=font_legend_prop)
-    
+
+    # 目盛ラベルもフォント指定
     for label in ax.get_xticklabels() + ax.get_yticklabels():
-        label.set_fontname('Times New Roman')
-    ax.set_xlabel("Time /min", fontsize=font_xlabel, fontname='Times New Roman')
-    ax.set_ylabel("Absorbance /-", fontsize=font_ylabel, fontname='Times New Roman')
-    # 目盛ラベルもserif系に
-    for label in ax.get_xticklabels() + ax.get_yticklabels():
-        label.set_fontname('Times New Roman')
+        label.set_fontproperties(font_prop)
 
     # スケールバー
     if show_scalebar:
@@ -226,7 +234,7 @@ if uploaded_files:
         ax.text(
             x_pos + (current_xlim[1] - current_xlim[0])*0.01,
             y_start + scale_value / 2,
-            f"{scale_value} mV", va='center', ha='left', fontsize=font_xlabel, fontname='Times New Roman'
+            f"{scale_value} mV", va='center', ha='left', fontsize=font_xlabel, fontproperties=font_prop
         )
 
     st.pyplot(fig)
