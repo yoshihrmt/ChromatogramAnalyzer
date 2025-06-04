@@ -10,7 +10,6 @@ from scipy.integrate import simpson
 import io
 import traceback
 
-# --- フォントプロパティの用意 ---
 font_path = "fonts/EBGaramond-Regular.ttf"
 if not os.path.exists(font_path):
     st.warning("フォントファイルが見つかりません。serifで表示します。")
