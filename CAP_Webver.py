@@ -161,6 +161,11 @@ if uploaded_files:
                 st.write(traceback.format_exc())
 
 if uploaded_files and file_info_list:
+    col1, col2 = st.columns(2)
+    with col1:
+        show_peaks = st.checkbox("ピークマーカーを表示", value=True, key="show_peaks_inline")
+    with col2:
+        show_legend = st.checkbox("凡例を表示", value=True, key="show_legend_inline")
     with st.sidebar:
         st.markdown(
             """
