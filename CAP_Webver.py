@@ -153,7 +153,7 @@ with st.sidebar:
         font_legend = st.slider("凡例フォント", 5, 22, 13, key="font_legend")
         font_tick = st.slider("x軸値フォント", 5, 18, 11, key="font_tick")
         font_scale_value = st.slider("スケールバー値フォント", 10, 26, 17, key="font_scale_value")
-    st.markdown(
+        st.markdown(
         """
         <div style="
         background: #2c2c2c;
