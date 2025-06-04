@@ -62,6 +62,8 @@ auto_xmin, auto_xmax, auto_ymin, auto_ymax = 0.0, 10.0, 0.0, 200.0
 # サイドバー設定
 with st.sidebar:
     st.header("グラフ詳細設定")
+    show_peaks = st.checkbox("ピークマーカーを表示（全データ）", True)
+    show_legend = st.checkbox("凡例を表示", True)
     x_min = st.number_input("x軸最小(分)", value=auto_xmin, disabled=xaxis_auto)
     x_max = st.number_input("x軸最大(分)", value=auto_xmax, disabled=xaxis_auto)
     y_min = st.number_input("y軸最小(mV)", value=auto_ymin, disabled=yaxis_auto)
@@ -228,8 +230,6 @@ if uploaded_files and file_info_list:
         file_name="chromatogram.pdf",
         mime="application/pdf"
     )
-    show_peaks = st.checkbox("ピークマーカーを表示（全データ）", True)
-    show_legend = st.checkbox("凡例を表示", True)
 
     # 解析結果表示
     st.markdown("### 解析結果")
