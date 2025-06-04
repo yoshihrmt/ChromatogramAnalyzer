@@ -2,19 +2,19 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib
 import matplotlib.lines as mlines
+from matplotlib.font_manager import FontProperties
 from scipy.signal import find_peaks
 from scipy.integrate import simpson
 import io
 
-# matplotlibのグローバルなフォント設定をserifへ統一
+# グローバルなmatplotlibフォント設定
 plt.rcParams['font.family'] = 'serif'
 plt.rcParams['font.serif'] = ['Times New Roman', 'Times', 'serif']
-plt.rcParams['mathtext.fontset'] = 'cm'              # 数式もserifに
-plt.rcParams['axes.unicode_minus'] = False           # マイナス記号を正しく出力
+plt.rcParams['mathtext.fontset'] = 'cm'              # 数式もserif系に
+plt.rcParams['axes.unicode_minus'] = False           # マイナス記号正規化
 
-# Streamlit全体のCSS指定（日本語含めシステムフォントでserif化/必要なら修正）
+# Streamlit全体CSSでserif化（ページ内UIなどに影響）
 st.markdown("""
 <style>
 html, body, [class*="css"]  {
@@ -68,7 +68,7 @@ uploaded_files = st.file_uploader(
     accept_multiple_files=True
 )
 
-# 軸範囲の自動計算変数の初期化
+# 軸範囲自動計算の初期化
 auto_xmin, auto_xmax, auto_ymin, auto_ymax = 0.0, 10.0, 0.0, 200.0
 file_info_list = []
 
@@ -109,7 +109,6 @@ if uploaded_files:
         except Exception as e:
             st.error(f"{uploaded_file.name}: エラー発生({e})")
 
-    # 軸範囲の自動計算
     if xmin_total and xmax_total:
         auto_xmin = 0
         auto_xmax = float(np.max(xmax_total))
@@ -203,12 +202,16 @@ if uploaded_files:
         clip_on=False
     )
 
-    # カスタム凡例
+    # カスタム凡例（ここをFontPropertiesで修正!）
     if show_legend:
-        ax.legend(handles=handles, fontsize=font_legend, prop={'family': 'serif', 'serif': ['Times New Roman', 'Times', 'serif']})
+        font_legend_prop = FontProperties(
+            family='serif',
+            serif=['Times New Roman', 'Times', 'serif'],
+            size=font_legend
+        )
+        ax.legend(handles=handles, prop=font_legend_prop)
     ax.tick_params(axis='both', labelsize=font_tick)
-
-    # 目盛もserif化
+    # 目盛ラベルもserif系に
     for label in ax.get_xticklabels() + ax.get_yticklabels():
         label.set_fontname('Times New Roman')
 
@@ -254,4 +257,3 @@ if uploaded_files:
             st.write(
                 f"""ピーク {i}:  保持時間: {info['time'][peak]:.2f}分  ピーク高さ: {info['data'][peak]:.2f}mV  面積: {area:.2f}  W_0.05h: {W_0_05h:.3f}  f: {f:.3f}  シンメトリー係数(S): {symmetry:.3f}"""
             )
-
