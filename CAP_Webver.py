@@ -156,8 +156,11 @@ with st.sidebar:
     font_tick = st.slider("目盛フォント", 6, 20, 10)
 
 # ============ ファイルアップロード・前処理 ============= #
+st.markdown(
+    "<span style='font-family: Times New Roman, Times, serif; font-size:1.12rem;'>Excelファイルを複数選択してください</span>",
+    unsafe_allow_html=True
+)
 uploaded_files = st.file_uploader(
-    "Excelファイルを複数選択してください",
     type=["xlsx", "xls"],
     accept_multiple_files=True
 )
