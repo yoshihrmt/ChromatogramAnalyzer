@@ -10,7 +10,7 @@ from scipy.integrate import simpson
 import io
 import traceback
 
-font_path = "fonts/EBGaramond-Regular.ttf"
+font_path = "fonts/times-new-roman.ttf"
 if not os.path.exists(font_path):
     st.warning("フォントファイルが見つかりません。serifで表示します。")
     font_prop = FontProperties(family="serif")
