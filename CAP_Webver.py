@@ -326,11 +326,15 @@ if uploaded_files and file_info_list:
     arrow_x = 0 - (xlim[1] - xlim[0]) * 0.05  # x=0より左に5%オフセット
     arrow_y = 0 + (ylim[1] - ylim[0]) * 0.05  # y=0より上に5%オフセット   
     ax.annotate(
-        xy=(0, 0),             # 原点を指す
-        xytext=(arrow_x, arrow_y),  # テキストの位置（原点の左上）
-        arrowprops=dict(facecolor='black', shrink=0.05),
-        fontsize=10
+        "← 原点",                # 表示する文字列
+        xy=(0, 0),               # 注釈の対象点（ここでは原点）
+        xytext=(-30, 30),        # テキストの位置（ピクセルオフセット）
+        textcoords='offset points',  # オフセットをピクセル単位で指定
+        arrowprops=dict(arrowstyle="->", color='black'),
+        fontsize=10,
+        color='black'
     )
+
 
     if show_legend:
         font_legend_prop = FontProperties(fname=font_path, size=font_legend)
