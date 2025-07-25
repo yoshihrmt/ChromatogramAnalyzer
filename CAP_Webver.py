@@ -287,7 +287,7 @@ if uploaded_files and file_info_list:
     xlim = ax.get_xlim()
 
     # 矢印を左上に移動（より確実な方法）
-    arrow_x = xlim[0] - (xlim[1] - xlim[0]) * 0.005
+    arrow_x = xlim[0] - (xlim[1] - xlim[0]) * 0.01
     arrow_y_start = ylim[0]
     arrow_y_end = ylim[1]
 
