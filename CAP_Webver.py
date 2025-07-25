@@ -262,13 +262,13 @@ if uploaded_files and file_info_list:
 
     # 軸スケール設定
     if not xaxis_auto and len(xmin_total)>0 and len(xmax_total)>0:
-        ax.set_xlim(0.0, x_max)
+        ax.set_xlim(x_min, x_max)
     elif xmin_total and xmax_total:
-        ax.set_xlim(min(xmin_total), max(xmax_total))
+        ax.set_xlim(0.0, max(xmax_total))
     if not yaxis_auto and len(ymin_total)>0 and len(ymax_total)>0:
-        ax.set_ylim(-10.0, y_max)
+        ax.set_ylim(y_min, y_max)
     elif ymin_total and ymax_total:
-        ax.set_ylim(min(ymin_total), max(ymax_total) * 1.1)
+        ax.set_ylim(-10.0, max(ymax_total) * 1.1)
 
     for spine in ["top", "right", "left"]:
         ax.spines[spine].set_visible(False)
