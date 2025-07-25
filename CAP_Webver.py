@@ -282,7 +282,8 @@ if uploaded_files and file_info_list:
 
     ylim = ax.get_ylim()
     xlim = ax.get_xlim()
-    arrow_x = xlim[0]
+    x_range = xlim[1] - xlim[0]
+    arrow_x = xlim[0] - x_range * 0.02
     ax.annotate(
         "",
         xy=(arrow_x, ylim[1]),
