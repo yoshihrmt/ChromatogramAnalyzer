@@ -283,11 +283,18 @@ if uploaded_files and file_info_list:
 
     ylim = ax.get_ylim()
     xlim = ax.get_xlim()
-    arrow_x = xlim[0]
+    
+    # 矢印を左上に移動
+    x_range = xlim[1] - xlim[0]
+    y_range = ylim[1] - ylim[0]
+    arrow_x = xlim[0] - x_range * 0.05  # 左に移動
+    arrow_y_start = ylim[0] + y_range * 0.1  # 下から少し上に
+    arrow_y_end = ylim[1] + y_range * 0.05   # 上に少し伸ばす
+    
     ax.annotate(
         "",
-        xy=(arrow_x, ylim[1]),
-        xytext=(arrow_x, ylim[0]),
+        xy=(arrow_x, arrow_y_end),
+        xytext=(arrow_x, arrow_y_start),
         arrowprops=dict(arrowstyle='->', lw=1),
         clip_on=False
     )
