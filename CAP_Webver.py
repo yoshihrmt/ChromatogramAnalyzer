@@ -285,8 +285,8 @@ if uploaded_files and file_info_list:
     ylim = ax.get_ylim()
     xlim = ax.get_xlim()
 
-    arrow_x = xlim[0] - (xlim[1] - xlim[0]) * 0.005
-    arrow_y_start = ylim[0] + (ylim[1] - ylim[0]) * 0.005
+    arrow_x = xlim[0] - (xlim[1] - xlim[0]) * 0.01
+    arrow_y_start = ylim[0] + (ylim[1] - ylim[0]) * 0.01
     arrow_y_end = ylim[1]
 
     ax.text(
