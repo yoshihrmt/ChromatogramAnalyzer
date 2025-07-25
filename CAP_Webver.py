@@ -282,12 +282,14 @@ if uploaded_files and file_info_list:
 
     ylim = ax.get_ylim()
     xlim = ax.get_xlim()
-    arrow_x = xlim[0]
+    arrow_x = xlim[0] + (xlim[1] - xlim[0]) * 0.05  # 左端から5%の位置
+    arrow_y_top = ylim[1] - (ylim[1] - ylim[0]) * 0.05  # 上端から5%下の位置
+    arrow_y_bottom = ylim[1] - (ylim[1] - ylim[0]) * 0.25  # 矢印の長さを調整
     ax.annotate(
         "",
-        xy=(arrow_x, ylim[1]),
-        xytext=(arrow_x, ylim[0]),
-        arrowprops=dict(arrowstyle='->', lw=1),
+        xy=(arrow_x, arrow_y_bottom),  # 矢印の先端（下）
+        xytext=(arrow_x, arrow_y_top),  # 矢印の始点（上）
+        arrowprops=dict(arrowstyle='->', lw=1.5, color='black'),
         clip_on=False
     )
 
