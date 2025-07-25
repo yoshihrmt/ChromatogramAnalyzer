@@ -188,7 +188,8 @@ uploaded_files = st.file_uploader(
 
 file_info_list = []
 if uploaded_files:
-    legends = []     xmin_total, xmax_total, ymin_total, ymax_total = [], [], [], []     for i, uploaded_file in enumerate(uploaded_files):
+    legends = []     xmin_total, xmax_total, ymin_total, ymax_total = [], [], [], []
+    for i, uploaded_file in enumerate(uploaded_files):
         legend_label = st.text_input(
             f"{uploaded_file.name} の凡例名",
             value=uploaded_file.name,
@@ -229,7 +230,6 @@ if uploaded_files:
             st.error(f"{uploaded_file.name}: エラー発生 ({e})")
             with st.expander("エラー詳細を表示"):
                 st.write(traceback.format_exc())
-
 if uploaded_files and file_info_list:
     # --- チェックボックス ---
     show_peaks = st.checkbox("ピークマーカーを表示", value=True, key="show_peaks_inline")
