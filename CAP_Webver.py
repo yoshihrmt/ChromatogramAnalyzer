@@ -23,7 +23,7 @@ plt.rcParams['mathtext.fontset'] = 'cm'
 st.markdown("""
 <style>
 html, body, [class*="css"]  {
-font-family: "EB Garamond", "Times New Roman", Times, serif !important;
+    font-family: "EB Garamond", "Times New Roman", Times, serif !important;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -184,11 +184,8 @@ uploaded_files = st.file_uploader(
 )
 
 file_info_list = []
-
 if uploaded_files:
-    legends = []
-    xmin_total, xmax_total, ymin_total, ymax_total = [], [], [], []
-    for i, uploaded_file in enumerate(uploaded_files):
+    legends = []     xmin_total, xmax_total, ymin_total, ymax_total = [], [], [], []     for i, uploaded_file in enumerate(uploaded_files):
         legend_label = st.text_input(
             f"{uploaded_file.name} の凡例名",
             value=uploaded_file.name,
@@ -235,11 +232,13 @@ if uploaded_files and file_info_list:
     show_peaks = st.checkbox("ピークマーカーを表示", value=True, key="show_peaks_inline")
     show_legend = st.checkbox("凡例を表示", value=True, key="show_legend_inline")
 
-    fig, ax = plt.subplots(figsize=(9, 4))
-    fig.patch.set_visible(False)  
-    ax.set_position([0.15, 0.15, 0.8, 0.8])
-    handles = []
+    # フィギュアサイズを大きくして余白を確保
+    fig, ax = plt.subplots(figsize=(10, 5))
 
+    # 軸の位置を調整して左上に余白を作る
+    ax.set_position([0.2, 0.2, 0.75, 0.7])
+
+    handles = []
     for idx, info in enumerate(file_info_list):
         data = info["data"]
         time = info["time"]
@@ -284,14 +283,14 @@ if uploaded_files and file_info_list:
 
     ylim = ax.get_ylim()
     xlim = ax.get_xlim()
-    
+
     # 矢印を左上に移動
     x_range = xlim[1] - xlim[0]
     y_range = ylim[1] - ylim[0]
     arrow_x = xlim[0] - x_range * 0.05  # 左に移動
     arrow_y_start = ylim[0] + y_range * 0.1  # 下から少し上に
     arrow_y_end = ylim[1] + y_range * 0.05   # 上に少し伸ばす
-    
+
     ax.annotate(
         "",
         xy=(arrow_x, arrow_y_end),
@@ -325,7 +324,8 @@ if uploaded_files and file_info_list:
     st.pyplot(fig)
 
     buf = io.BytesIO()
-    fig.savefig(buf, format="png", bbox_inches="tight")
+    # bbox_inchesを調整して矢印も含めて保存
+    fig.savefig(buf, format="png", bbox_inches=None, pad_inches=0.1)
     buf.seek(0)
     st.download_button(
         label="グラフをPNGで保存",
