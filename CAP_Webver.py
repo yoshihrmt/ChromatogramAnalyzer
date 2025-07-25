@@ -324,7 +324,8 @@ if uploaded_files and file_info_list:
     # Absorbanceの矢印を左上から正しく表示
     ylim = ax.get_ylim()
     xlim = ax.get_xlim()
-    arrow_x = xlim[0] + (xlim[1] - xlim[0]) * 0.001
+    arrow_x = 0 - (xlim[1] - xlim[0]) * 0.05  # x=0より左に5%オフセット
+    arrow_y = 0 + (ylim[1] - ylim[0]) * 0.05  # y=0より上に5%オフセット   
     ax.annotate(
         "",
         xy=(arrow_x, ylim[1]),
