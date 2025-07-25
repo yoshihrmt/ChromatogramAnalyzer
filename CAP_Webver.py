@@ -150,11 +150,11 @@ with st.sidebar:
         """,
         unsafe_allow_html=True
     )
-    font_xlabel = st.slider("x軸ラベルフォント", 10, 30, 19, key="font_xlabel")
-    font_ylabel = st.slider("y軸ラベルフォント", 10, 30, 19, key="font_ylabel")
-    font_legend = st.slider("凡例フォント", 5, 22, 13, key="font_legend")
-    font_tick = st.slider("x軸値フォント", 5, 18, 11, key="font_tick")
-    font_scale_value = st.slider("スケールバー値フォント", 10, 26, 17, key="font_scale_value")
+    font_xlabel = st.slider("x軸ラベルフォント", 10, 30, 25, key="font_xlabel")
+    font_ylabel = st.slider("y軸ラベルフォント", 10, 30, 25, key="font_ylabel")
+    font_legend = st.slider("凡例フォント", 5, 22, 18, key="font_legend")
+    font_tick = st.slider("x軸値フォント", 5, 18, 14, key="font_tick")
+    font_scale_value = st.slider("スケールバー値フォント", 10, 30, 25, key="font_scale_value")
     st.markdown(
         """
         <div style="
