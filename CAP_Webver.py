@@ -321,12 +321,11 @@ if uploaded_files and file_info_list:
         label.set_fontproperties(font_prop)
         label.set_fontsize(font_tick)
 
-    # Absorbanceの矢印を左上から正しく表示
     ylim = ax.get_ylim()
     xlim = ax.get_xlim()
     arrow_x = 0 - (xlim[1] - xlim[0]) * 0.05  # x=0より左に5%オフセット
     arrow_y = 0 + (ylim[1] - ylim[0]) * 0.05  # y=0より上に5%オフセット   
-   ax.annotate(
+    ax.annotate(
         xy=(0, 0),             # 原点を指す
         xytext=(arrow_x, arrow_y),  # テキストの位置（原点の左上）
         arrowprops=dict(facecolor='black', shrink=0.05),
