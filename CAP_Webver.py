@@ -183,11 +183,8 @@ uploaded_files = st.file_uploader(
     accept_multiple_files=True
 )
 
-file_info_list = []
-if uploaded_files:
-    legends = [] 
-    xmin_total, xmax_total, ymin_total, ymax_total = [], [], [], []
-    for i, uploaded_file in enumerate(uploaded_files):
+file_info_list = [] if uploaded_files:
+    legends = []     xmin_total, xmax_total, ymin_total, ymax_total = [], [], [], []     for i, uploaded_file in enumerate(uploaded_files):
         legend_label = st.text_input(
             f"{uploaded_file.name} の凡例名",
             value=uploaded_file.name,
@@ -234,14 +231,10 @@ if uploaded_files and file_info_list:
     show_peaks = st.checkbox("ピークマーカーを表示", value=True, key="show_peaks_inline")
     show_legend = st.checkbox("凡例を表示", value=True, key="show_legend_inline")
 
-    # フィギュアサイズを大きくして余白を確保
-    fig, ax = plt.subplots(figsize=(10, 5))
+    # より大きなフィギュアサイズで左に十分な余白を確保
+    fig, ax = plt.subplots(figsize=(12, 6))
 
-    # 軸の位置を調整して左上に余白を作る
-    ax.set_position([0.2, 0.2, 0.75, 0.7])
-
-    handles = []
-    for idx, info in enumerate(file_info_list):
+    handles = []     for idx, info in enumerate(file_info_list):
         data = info["data"]
         time = info["time"]
         peaks = info["peaks"]
@@ -283,26 +276,33 @@ if uploaded_files and file_info_list:
         label.set_fontproperties(font_prop)
         label.set_fontsize(font_tick)
 
+    # 軸の位置を調整してから矢印を描画
+    plt.tight_layout()
+    fig.subplots_adjust(left=0.15, bottom=0.15, right=0.95, top=0.9)
+
     ylim = ax.get_ylim()
     xlim = ax.get_xlim()
 
-    # 矢印を左上に移動
-    x_range = xlim[1] - xlim[0]
-    y_range = ylim[1] - ylim[0]
-    arrow_x = xlim[0] - x_range * 0.05  # 左に移動
-    arrow_y_start = ylim[0] + y_range * 0.1  # 下から少し上に
-    arrow_y_end = ylim[1] + y_range * 0.05   # 上に少し伸ばす
+    # 矢印を左上に移動（より確実な方法）
+    arrow_x = xlim[0] - (xlim[1] - xlim[0]) * 0.08
+    arrow_y_start = ylim[0]
+    arrow_y_end = ylim[1]
 
+    # 矢印を描画（より確実な設定）
     ax.annotate(
         "",
         xy=(arrow_x, arrow_y_end),
         xytext=(arrow_x, arrow_y_start),
-        arrowprops=dict(arrowstyle='->', lw=1),
-        clip_on=False
+        arrowprops=dict(arrowstyle='->', lw=2, color='black'),
+        clip_on=False,
+        annotation_clip=False
     )
 
     if show_legend:
-        font_legend_prop = FontProperties(fname=font_path, size=font_legend)
+        if os.path.exists(font_path):
+            font_legend_prop = FontProperties(fname=font_path, size=font_legend)
+        else:
+            font_legend_prop = FontProperties(family="serif", size=font_legend)
         ax.legend(handles=handles, prop=font_legend_prop)
 
     if show_scalebar:
@@ -326,8 +326,8 @@ if uploaded_files and file_info_list:
     st.pyplot(fig)
 
     buf = io.BytesIO()
-    # bbox_inchesを調整して矢印も含めて保存
-    fig.savefig(buf, format="png", bbox_inches=None, pad_inches=0.1)
+    # 保存時に矢印も含まれるように設定
+    fig.savefig(buf, format="png", dpi=300, bbox_inches='tight', pad_inches=0.2)
     buf.seek(0)
     st.download_button(
         label="グラフをPNGで保存",
