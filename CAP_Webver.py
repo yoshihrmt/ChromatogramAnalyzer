@@ -275,7 +275,6 @@ if uploaded_files and file_info_list:
     ax.set_yticks([])
 
     ax.set_xlabel("Time /min", fontsize=font_xlabel, fontproperties=font_prop)
-    ax.set_ylabel("Absorbance /-", fontsize=font_ylabel, fontproperties=font_prop)
     for label in ax.get_xticklabels() + ax.get_yticklabels():
         label.set_fontproperties(font_prop)
         label.set_fontsize(font_tick)
@@ -292,6 +291,22 @@ if uploaded_files and file_info_list:
     arrow_y_start = ylim[0]
     arrow_y_end = ylim[1]
 
+    ax.text(
+        arrow_x - (xlim[1] - xlim[0]) * 0.02,  # 矢印よりさらに左に配置
+        (arrow_y_start + arrow_y_end) / 2,     # 矢印の中央の高さ
+        "Absorbance /-",
+        fontsize=font_ylabel,
+        fontproperties=font_prop,
+        rotation=90,
+        va='center',
+        ha='right',
+        clip_on=False
+    )
+    
+    for label in ax.get_xticklabels() + ax.get_yticklabels():
+        label.set_fontproperties(font_prop)
+        label.set_fontsize(font_tick)
+    
     # 矢印を描画（より確実な設定）
     ax.annotate(
         "",
