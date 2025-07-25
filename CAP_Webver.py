@@ -326,13 +326,12 @@ if uploaded_files and file_info_list:
     xlim = ax.get_xlim()
     arrow_x = 0 - (xlim[1] - xlim[0]) * 0.05  # x=0より左に5%オフセット
     arrow_y = 0 + (ylim[1] - ylim[0]) * 0.05  # y=0より上に5%オフセット   
-    ax.annotate(
-        "",
-        xy=(arrow_x, ylim[1]),
-        xytext=(arrow_x, ylim[0]),
-        arrowprops=dict(arrowstyle='->', lw=1),
-        clip_on=False
-    )
+   ax.annotate(
+    xy=(0, 0),             # 原点を指す
+    xytext=(arrow_x, arrow_y),  # テキストの位置（原点の左上）
+    arrowprops=dict(facecolor='black', shrink=0.05),
+    fontsize=10
+)
 
     if show_legend:
         font_legend_prop = FontProperties(fname=font_path, size=font_legend)
