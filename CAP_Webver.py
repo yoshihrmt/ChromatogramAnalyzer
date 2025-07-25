@@ -292,7 +292,7 @@ if uploaded_files and file_info_list:
     arrow_y_end = ylim[1]
 
     ax.text(
-        arrow_x - (xlim[1] - xlim[0]) * 0.02,  # 矢印よりさらに左に配置
+        arrow_x - (xlim[1] - xlim[0]) * 0.01,  # 矢印よりさらに左に配置
         (arrow_y_start + arrow_y_end) / 2,     # 矢印の中央の高さ
         "Absorbance /-",
         fontsize=font_ylabel,
