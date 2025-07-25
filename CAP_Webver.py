@@ -123,6 +123,29 @@ with st.sidebar:
         text-align: center;
         font-family: 'EB Garamond', 'Times New Roman', Times, serif;
         ">
+        ピークラベル
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+    peak_label_prefix = st.text_input("ピークラベル接頭語", value="P", key="label_prefix")
+    peak_label_x_offset = st.slider("ピークラベル xオフセット", -1.0, 1.0, 0.0, 0.05, key="label_x_offset")
+    peak_label_y_offset = st.slider("ピークラベル yオフセット", -1.0, 1.0, 0.1, 0.05, key="label_y_offset")
+
+
+    st.markdown(
+        """
+        <div style="
+        background: #2c2c2c;
+        color: #fff;
+        border-radius: 16px;
+        padding: 10px 0 6px 0;
+        margin-bottom: 18px;
+        font-size: 1.2rem;
+        font-weight: bold;
+        text-align: center;
+        font-family: 'EB Garamond', 'Times New Roman', Times, serif;
+        ">
         スケールバー
         </div>
         """,
@@ -260,9 +283,11 @@ if uploaded_files and file_info_list:
             # ピークラベルを追加
             if show_peak_labels:
                 for i, peak in enumerate(peaks):
+                    x_pos = time[peak] + peak_label_x_offset
+                    y_pos = data[peak] + max(data) * peak_label_y_offset
                     ax.text(
-                        time[peak], data[peak] + max(data) * 0.05,
-                        f"P{i+1}",
+                        x_pos, y_pos,
+                        f"{peak_label_prefix}{i+1}",
                         ha='center', va='bottom',
                         fontsize=font_peak_label,
                         fontproperties=font_prop,
@@ -299,7 +324,7 @@ if uploaded_files and file_info_list:
     # Absorbanceの矢印を左上から正しく表示
     ylim = ax.get_ylim()
     xlim = ax.get_xlim()
-    arrow_x = xlim[0] - (xlim[1] - xlim[0]) * 0.05  # 左側に少しずらす
+    arrow_x = xlim[0] + (xlim[1] - xlim[0]) * 0.01
     ax.annotate(
         "",
         xy=(arrow_x, ylim[1]),
