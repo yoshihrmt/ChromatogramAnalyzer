@@ -230,6 +230,7 @@ if uploaded_files:
             st.error(f"{uploaded_file.name}: エラー発生 ({e})")
             with st.expander("エラー詳細を表示"):
                 st.write(traceback.format_exc())
+
 if uploaded_files and file_info_list:
     # --- チェックボックス ---
     show_peaks = st.checkbox("ピークマーカーを表示", value=True, key="show_peaks_inline")
