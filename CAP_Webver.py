@@ -286,7 +286,7 @@ if uploaded_files and file_info_list:
                     y_pos = data[peak] + max(data) * peak_label_y_offset
                     ax.text(
                         x_pos, y_pos,
-                        f"{time[peak]:.2f}",  # ピークラベルは時間（例: 2.35）
+                        f"{peak_label_prefix}",
                         ha='center', va='bottom',
                         fontsize=font_peak_label,
                         fontproperties=font_prop,
