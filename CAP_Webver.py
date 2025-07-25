@@ -23,7 +23,7 @@ plt.rcParams['mathtext.fontset'] = 'cm'
 st.markdown("""
 <style>
 html, body, [class*="css"]  {
-font-family: "EB Garamond", "Times New Roman", Times, serif !important;
+    font-family: "EB Garamond", "Times New Roman", Times, serif !important;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -102,7 +102,6 @@ with st.sidebar:
         """,
         unsafe_allow_html=True
     )
-    auto_xmin, auto_xmax, auto_ymin, auto_ymax = 0.0, 10.0, 0.0, 200.0
 
     xaxis_auto = st.checkbox("x軸を自動", value=True, key="xaxis_auto")
     yaxis_auto = st.checkbox("y軸を自動", value=True, key="yaxis_auto")
@@ -110,6 +109,7 @@ with st.sidebar:
     x_max = st.number_input("x軸最大(分)", value=10.0, disabled=xaxis_auto, key="x_max")
     y_min = st.number_input("y軸最小(mV)", value=-10.0, disabled=yaxis_auto, key="y_min")
     y_max = st.number_input("y軸最大(mV)", value=200.0, disabled=yaxis_auto, key="y_max")
+
     st.markdown(
         """
         <div style="
@@ -132,6 +132,7 @@ with st.sidebar:
     scale_value = st.number_input("スケールバー値(mV)", value=50, key="scale_value")
     scale_x_pos = st.slider("スケールバー x位置（0=左, 1=右）", 0.0, 1.0, 0.7, 0.1, key="scale_x_pos")
     scale_y_pos = st.slider("スケールバー y位置（0=下, 1=上）", 0.0, 1.0, 0.15, 0.1, key="scale_y_pos")
+
     st.markdown(
         """
         <div style="
@@ -155,6 +156,8 @@ with st.sidebar:
     font_legend = st.slider("凡例フォント", 5, 22, 13, key="font_legend")
     font_tick = st.slider("x軸値フォント", 5, 18, 11, key="font_tick")
     font_scale_value = st.slider("スケールバー値フォント", 10, 26, 17, key="font_scale_value")
+    font_peak_label = st.slider("ピークラベルフォント", 8, 20, 12, key="font_peak_label")  # 追加
+
     st.markdown(
         """
         <div style="
@@ -184,15 +187,13 @@ uploaded_files = st.file_uploader(
 )
 
 file_info_list = []
-
 if uploaded_files:
-    legends = []
-    xmin_total, xmax_total, ymin_total, ymax_total = [], [], [], []
-    for i, uploaded_file in enumerate(uploaded_files):
+    legends = []     xmin_total, xmax_total, ymin_total, ymax_total = [], [], [], []     for i, uploaded_file in enumerate(uploaded_files):
         legend_label = st.text_input(
             f"{uploaded_file.name} の凡例名",
             value=uploaded_file.name,
-            key=uploaded_file.name
+            key=uploaded_file.name,
+            help="特殊文字（℃、α、β等）も使用可能です"  # ヒント追加
         )
         legends.append(legend_label)
 
@@ -230,14 +231,13 @@ if uploaded_files:
                 st.write(traceback.format_exc())
 
 if uploaded_files and file_info_list:
-
-    # --- ここでチェックボックスをメインカラムで上に設置 ---
+    # --- チェックボックス ---
     show_peaks = st.checkbox("ピークマーカーを表示", value=True, key="show_peaks_inline")
     show_legend = st.checkbox("凡例を表示", value=True, key="show_legend_inline")
+    show_peak_labels = st.checkbox("ピークラベルを表示", value=False, key="show_peak_labels")  # 追加
 
     fig, ax = plt.subplots(figsize=(9, 4))
     handles = []
-
     for idx, info in enumerate(file_info_list):
         data = info["data"]
         time = info["time"]
@@ -253,6 +253,19 @@ if uploaded_files and file_info_list:
                 linestyle="None", markersize=6,
                 markerfacecolor=color, markeredgecolor=color, label=None
             )
+
+            # ピークラベルを追加
+            if show_peak_labels:
+                for i, peak in enumerate(peaks):
+                    ax.text(
+                        time[peak], data[peak] + max(data) * 0.05,
+                        f"P{i+1}",
+                        ha='center', va='bottom',
+                        fontsize=font_peak_label,
+                        fontproperties=font_prop,
+                        color=color
+                    )
+
             legend_line = mlines.Line2D([], [], color=color, marker=marker, linestyle='-',
                                         label=legend, markersize=6, markerfacecolor=color, markeredgecolor=color)
         else:
@@ -280,9 +293,10 @@ if uploaded_files and file_info_list:
         label.set_fontproperties(font_prop)
         label.set_fontsize(font_tick)
 
+    # Absorbanceの矢印を左上から正しく表示
     ylim = ax.get_ylim()
     xlim = ax.get_xlim()
-    arrow_x = xlim[0]
+    arrow_x = xlim[0] - (xlim[1] - xlim[0]) * 0.05  # 左側に少しずらす
     ax.annotate(
         "",
         xy=(arrow_x, ylim[1]),
