@@ -292,7 +292,7 @@ if uploaded_files and file_info_list:
     arrow_y_end = ylim[1]
 
     ax.text(
-        arrow_x - (xlim[1] - xlim[0]) * 0.005
+        arrow_x - (xlim[1] - xlim[0]) * 0.05
         (arrow_y_start + arrow_y_end) / 2,
         "Absorbance /-",
         fontsize=font_ylabel,
