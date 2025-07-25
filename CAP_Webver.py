@@ -287,13 +287,13 @@ if uploaded_files and file_info_list:
     xlim = ax.get_xlim()
 
     # 矢印を左上に移動（より確実な方法）
-    arrow_x = xlim[0] - (xlim[1] - xlim[0]) * 0.02
+    arrow_x = xlim[0] - (xlim[1] - xlim[0]) * 0.005
     arrow_y_start = ylim[0]
     arrow_y_end = ylim[1]
 
     ax.text(
-        arrow_x - (xlim[1] - xlim[0]) * 0.005,  # 矢印よりさらに左に配置
-        (arrow_y_start + arrow_y_end) / 2,     # 矢印の中央の高さ
+        arrow_x - (xlim[1] - xlim[0]) * 0.005
+        (arrow_y_start + arrow_y_end) / 2,
         "Absorbance /-",
         fontsize=font_ylabel,
         fontproperties=font_prop,
