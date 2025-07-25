@@ -343,7 +343,7 @@ if uploaded_files and file_info_list:
     st.pyplot(fig)
 
     buf = io.BytesIO()
-    # 保存時に矢印も含まれるように設定
+
     fig.savefig(buf, format="png", dpi=300, bbox_inches='tight', pad_inches=0.2)
     buf.seek(0)
     st.download_button(
@@ -352,6 +352,16 @@ if uploaded_files and file_info_list:
         file_name="chromatogram.png",
         mime="application/png"
     )
+
+    fig.savefig(buf, format="pdf", dpi=300, bbox_inches='tight', pad_inches=0.2)
+    buf.seek(0)
+    st.download_button(
+        label="グラフをPDFで保存",
+        data=buf,
+        file_name="chromatogram.pdf",
+        mime="application/pdf"
+    )
+
 
     st.markdown("### 解析結果")
     for info in file_info_list:
