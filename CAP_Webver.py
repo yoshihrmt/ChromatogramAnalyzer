@@ -186,13 +186,6 @@ uploaded_files = st.file_uploader(
     accept_multiple_files=True
 )
 
-# --- ファイルアップロード ---
-uploaded_files = st.file_uploader(
-    "Excelファイルを複数選択してください",
-    type=["xlsx", "xls"],
-    accept_multiple_files=True
-)
-
 file_info_list = []
 if uploaded_files:
     legends = []
