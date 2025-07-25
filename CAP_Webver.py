@@ -23,7 +23,7 @@ plt.rcParams['mathtext.fontset'] = 'cm'
 st.markdown("""
 <style>
 html, body, [class*="css"]  {
-    font-family: "EB Garamond", "Times New Roman", Times, serif !important;
+font-family: "EB Garamond", "Times New Roman", Times, serif !important;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -102,6 +102,7 @@ with st.sidebar:
         """,
         unsafe_allow_html=True
     )
+    auto_xmin, auto_xmax, auto_ymin, auto_ymax = 0.0, 10.0, 0.0, 200.0
 
     xaxis_auto = st.checkbox("x軸を自動", value=True, key="xaxis_auto")
     yaxis_auto = st.checkbox("y軸を自動", value=True, key="yaxis_auto")
@@ -109,30 +110,6 @@ with st.sidebar:
     x_max = st.number_input("x軸最大(分)", value=10.0, disabled=xaxis_auto, key="x_max")
     y_min = st.number_input("y軸最小(mV)", value=-10.0, disabled=yaxis_auto, key="y_min")
     y_max = st.number_input("y軸最大(mV)", value=200.0, disabled=yaxis_auto, key="y_max")
-
-    st.markdown(
-        """
-        <div style="
-        background: #2c2c2c;
-        color: #fff;
-        border-radius: 16px;
-        padding: 10px 0 6px 0;
-        margin-bottom: 18px;
-        font-size: 1.2rem;
-        font-weight: bold;
-        text-align: center;
-        font-family: 'EB Garamond', 'Times New Roman', Times, serif;
-        ">
-        ピークラベル
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-    peak_label_prefix = st.text_input("ピークラベル接頭語", value="P", key="label_prefix")
-    peak_label_x_offset = st.slider("ピークラベル xオフセット", -1.0, 1.0, 0.0, 0.05, key="label_x_offset")
-    peak_label_y_offset = st.slider("ピークラベル yオフセット", -1.0, 1.0, 0.1, 0.05, key="label_y_offset")
-
-
     st.markdown(
         """
         <div style="
@@ -155,7 +132,6 @@ with st.sidebar:
     scale_value = st.number_input("スケールバー値(mV)", value=50, key="scale_value")
     scale_x_pos = st.slider("スケールバー x位置（0=左, 1=右）", 0.0, 1.0, 0.7, 0.1, key="scale_x_pos")
     scale_y_pos = st.slider("スケールバー y位置（0=下, 1=上）", 0.0, 1.0, 0.15, 0.1, key="scale_y_pos")
-
     st.markdown(
         """
         <div style="
@@ -179,8 +155,6 @@ with st.sidebar:
     font_legend = st.slider("凡例フォント", 5, 22, 13, key="font_legend")
     font_tick = st.slider("x軸値フォント", 5, 18, 11, key="font_tick")
     font_scale_value = st.slider("スケールバー値フォント", 10, 26, 17, key="font_scale_value")
-    font_peak_label = st.slider("ピークラベルフォント", 8, 20, 12, key="font_peak_label")  # 追加
-
     st.markdown(
         """
         <div style="
@@ -210,6 +184,7 @@ uploaded_files = st.file_uploader(
 )
 
 file_info_list = []
+
 if uploaded_files:
     legends = []
     xmin_total, xmax_total, ymin_total, ymax_total = [], [], [], []
@@ -217,8 +192,7 @@ if uploaded_files:
         legend_label = st.text_input(
             f"{uploaded_file.name} の凡例名",
             value=uploaded_file.name,
-            key=uploaded_file.name,
-            help="特殊文字（℃、α、β等）も使用可能です"
+            key=uploaded_file.name
         )
         legends.append(legend_label)
 
@@ -255,15 +229,15 @@ if uploaded_files:
             with st.expander("エラー詳細を表示"):
                 st.write(traceback.format_exc())
 
-
 if uploaded_files and file_info_list:
-    # --- チェックボックス ---
+
+    # --- ここでチェックボックスをメインカラムで上に設置 ---
     show_peaks = st.checkbox("ピークマーカーを表示", value=True, key="show_peaks_inline")
     show_legend = st.checkbox("凡例を表示", value=True, key="show_legend_inline")
-    show_peak_labels = st.checkbox("ピークラベルを表示", value=False, key="show_peak_labels")  # 追加
 
     fig, ax = plt.subplots(figsize=(9, 4))
     handles = []
+
     for idx, info in enumerate(file_info_list):
         data = info["data"]
         time = info["time"]
@@ -279,21 +253,6 @@ if uploaded_files and file_info_list:
                 linestyle="None", markersize=6,
                 markerfacecolor=color, markeredgecolor=color, label=None
             )
-
-            if show_peak_labels:
-                for peak in peaks:
-                    x_pos = time[peak] + peak_label_x_offset
-                    y_pos = data[peak] + max(data) * peak_label_y_offset
-                    ax.text(
-                        x_pos, y_pos,
-                        f"{peak_label_prefix}",
-                        ha='center', va='bottom',
-                        fontsize=font_peak_label,
-                        fontproperties=font_prop,
-                        color=color
-                    )
-
-
             legend_line = mlines.Line2D([], [], color=color, marker=marker, linestyle='-',
                                         label=legend, markersize=6, markerfacecolor=color, markeredgecolor=color)
         else:
@@ -323,18 +282,14 @@ if uploaded_files and file_info_list:
 
     ylim = ax.get_ylim()
     xlim = ax.get_xlim()
-    arrow_x = 0 - (xlim[1] - xlim[0]) * 0.05  # x=0より左に5%オフセット
-    arrow_y = 0 + (ylim[1] - ylim[0]) * 0.05  # y=0より上に5%オフセット   
+    arrow_x = xlim[0]
     ax.annotate(
-        "← 原点",                # 表示する文字列
-        xy=(0, 0),               # 注釈の対象点（ここでは原点）
-        xytext=(-30, 30),        # テキストの位置（ピクセルオフセット）
-        textcoords='offset points',  # オフセットをピクセル単位で指定
-        arrowprops=dict(arrowstyle="->", color='black'),
-        fontsize=10,
-        color='black'
+        "",
+        xy=(arrow_x, ylim[1]),
+        xytext=(arrow_x, ylim[0]),
+        arrowprops=dict(arrowstyle='->', lw=1),
+        clip_on=False
     )
-
 
     if show_legend:
         font_legend_prop = FontProperties(fname=font_path, size=font_legend)
