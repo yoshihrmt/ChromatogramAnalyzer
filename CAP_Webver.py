@@ -236,7 +236,8 @@ if uploaded_files and file_info_list:
     show_legend = st.checkbox("凡例を表示", value=True, key="show_legend_inline")
 
     fig, ax = plt.subplots(figsize=(9, 4))
-    plt.subplots_adjust(left=0.15, bottom=0.15, right=0.9, top=0.9)
+    fig.patch.set_visible(False)  
+    ax.set_position([0.15, 0.15, 0.8, 0.8])
     handles = []
 
     for idx, info in enumerate(file_info_list):
