@@ -237,7 +237,8 @@ if uploaded_files and file_info_list:
     # より大きなフィギュアサイズで左に十分な余白を確保
     fig, ax = plt.subplots(figsize=(12, 6))
 
-    handles = []     for idx, info in enumerate(file_info_list):
+    handles = []     
+    for idx, info in enumerate(file_info_list):
         data = info["data"]
         time = info["time"]
         peaks = info["peaks"]
