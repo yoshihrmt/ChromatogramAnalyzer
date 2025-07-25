@@ -280,19 +280,19 @@ if uploaded_files and file_info_list:
                 markerfacecolor=color, markeredgecolor=color, label=None
             )
 
-            # ピークラベルを追加
             if show_peak_labels:
-                for i, peak in enumerate(peaks):
+                for peak in peaks:
                     x_pos = time[peak] + peak_label_x_offset
                     y_pos = data[peak] + max(data) * peak_label_y_offset
                     ax.text(
                         x_pos, y_pos,
-                        f"{peak_label_prefix}{i+1}",
+                        f"{time[peak]:.2f}",  # ピークラベルは時間（例: 2.35）
                         ha='center', va='bottom',
                         fontsize=font_peak_label,
                         fontproperties=font_prop,
                         color=color
                     )
+
 
             legend_line = mlines.Line2D([], [], color=color, marker=marker, linestyle='-',
                                         label=legend, markersize=6, markerfacecolor=color, markeredgecolor=color)
