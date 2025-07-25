@@ -186,6 +186,13 @@ uploaded_files = st.file_uploader(
     accept_multiple_files=True
 )
 
+# --- ファイルアップロード ---
+uploaded_files = st.file_uploader(
+    "Excelファイルを複数選択してください",
+    type=["xlsx", "xls"],
+    accept_multiple_files=True
+)
+
 file_info_list = []
 if uploaded_files:
     legends = []     xmin_total, xmax_total, ymin_total, ymax_total = [], [], [], []
@@ -194,7 +201,7 @@ if uploaded_files:
             f"{uploaded_file.name} の凡例名",
             value=uploaded_file.name,
             key=uploaded_file.name,
-            help="特殊文字（℃、α、β等）も使用可能です"  # ヒント追加
+            help="特殊文字（℃、α、β等）も使用可能です"
         )
         legends.append(legend_label)
 
@@ -230,6 +237,7 @@ if uploaded_files:
             st.error(f"{uploaded_file.name}: エラー発生 ({e})")
             with st.expander("エラー詳細を表示"):
                 st.write(traceback.format_exc())
+
 
 if uploaded_files and file_info_list:
     # --- チェックボックス ---
