@@ -279,16 +279,14 @@ if uploaded_files and file_info_list:
         label.set_fontproperties(font_prop)
         label.set_fontsize(font_tick)
 
-    # 軸の位置を調整してから矢印を描画
     plt.tight_layout()
     fig.subplots_adjust(left=0.15, bottom=0.15, right=0.95, top=0.9)
 
     ylim = ax.get_ylim()
     xlim = ax.get_xlim()
 
-    # 矢印を左上に移動（より確実な方法）
     arrow_x = xlim[0] - (xlim[1] - xlim[0]) * 0.005
-    arrow_y_start = ylim[0]
+    arrow_y_start = ylim[0] + (ylim[1] - ylim[0]) * 0.1
     arrow_y_end = ylim[1]
 
     ax.text(
